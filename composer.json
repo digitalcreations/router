@@ -1,0 +1,38 @@
+{
+    "name": "dc/router",
+    "description": "HTTP router",
+    "keywords": ["http", "router", "routing"],
+    "homepage": "http://github.com/digitalcreations/router",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Digital Creations AS",
+            "homepage": "http://www.digitalcreations.no",
+            "role": "Company"
+        },
+        {
+            "name": "Vegard Andreas Larsen",
+            "homepage": "http://vega.rd.no",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "http://github.com/digitalcreations/router/issues",
+        "source": "http://github.com/digitalcreations/router"
+    },
+    "suggest": {
+        "dc/ioc": "0.*"
+    },
+    "require": {
+        "willdurand/negotiation": "1.3.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*",
+        "dc/ioc": "0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "DC\\Router\\": "src/Router"
+        }
+    }
+}
