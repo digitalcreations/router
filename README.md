@@ -78,6 +78,17 @@ function getToy($toyId, $catName) {
   // notice that the variables for the method do not need to be in the same order as in the route,
   // but they need to have the same names
 }
+
+/**
+ * @route GET /cats/?filter={cats:catFilter}
+ */
+function filterCats($cats, $filter) {
+  // This uses the catFilter parameter type (see below) to convert the input sent through the 
+  // filter GET parameter and provides it with the variable named $cats. The ONLY time you'll 
+  // use this, is if you want parameter type conversion, or when you want to rename the query 
+  // parameter before it arrives. Note that the $filter parameter is still available, but is 
+  // a string 
+}
 ```
 
 # Parameter types

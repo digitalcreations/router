@@ -103,6 +103,10 @@ class RouterSetupTest extends \PHPUnit_Framework_TestCase {
 
         $mockRequest = $this->getMock('\DC\Router\IRequest');
         $mockRequest
+            ->expects($this->once())
+            ->method('getRequestParameters')
+            ->willReturn(array());
+        $mockRequest
             ->expects($this->any())
             ->method('getMethod')
             ->willReturn('GET');

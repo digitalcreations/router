@@ -47,6 +47,12 @@ class DefaultRouteMatcher implements IRouteMatcher {
         // find variable:type between start and end delimiters, limited to what would be a valid PHP variable name
         $findParamsRegex = '#'.self::PARAMETER_DELIMITER_START.'[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(:[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)?'.self::PARAMETER_DELIMITER_END.'#';
 
+        $path = $route->getPath();
+        $query = parse_url($path, PHP_URL_QUERY);
+        if ($query != null && $query != '') {
+            $path = str_replace($path, (string)$query, '');
+        }
+
         return '#^'.preg_replace_callback($findParamsRegex, function($matches) {
             $replacement = trim($matches[0], '{}');
             $parts = explode(':', $replacement);
@@ -57,14 +63,22 @@ class DefaultRouteMatcher implements IRouteMatcher {
             return '(?P<' . $name .'>'.
             (!isset($type) ? '.*' : $this->parameterFactory->getParameterFromType($type)->getRegularExpression()).
             ')';
-        }, $route->getPath()).'$#';
+        }, $path).'$#';
     }
 
-    private function getRouteParameterNameToTypeMap(IRoute $route) {
+    /**
+     * @param $path
+     * @return array[array] Array of matches, second-level array has keys 'name', 'type'
+     */
+    private function extractParameterInfo($path) {
         // find variable:type between start and end delimiters, limited to what would be a valid PHP variable name
         $findParamsRegex = '#'.self::PARAMETER_DELIMITER_START.'(?P<name>[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)(?P<type>:[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)?'.self::PARAMETER_DELIMITER_END.'#';
+        preg_match_all($findParamsRegex, $path, $matches, PREG_SET_ORDER);
+        return $matches;
+    }
 
-        preg_match_all($findParamsRegex, $route->getPath(), $matches, PREG_SET_ORDER);
+    private function getRouteParameterNameToTypeMap($path) {
+        $matches = $this->extractParameterInfo($path);
         $result = array();
         foreach ($matches as $parameter) {
             $result[$parameter['name']] = isset($parameter['type']) ? ltrim($parameter['type'], ':') : 'string';
@@ -89,19 +103,39 @@ class DefaultRouteMatcher implements IRouteMatcher {
     function extractParameters(IRequest $request, IRoute $route)
     {
         preg_match_all($this->getRouteRegularExpression($route), $request->getPath(), $matches, PREG_SET_ORDER);
-        // $matches now contain numeric indices of the groups as well as named indices
-        // we need to get rid of the numeric indices
-        $allowedKeys = array_filter(array_keys($matches[0]), function($key) {
-            return !is_numeric($key);
-        });
-        $valueMap = array_intersect_key($matches[0], array_flip($allowedKeys));
-        $typeMap = $this->getRouteParameterNameToTypeMap($route);
+        $valueMap = array();
+        if (count($matches) > 0) {
+            // $matches now contain numeric indices of the groups as well as named indices
+            // we need to get rid of the numeric indices
+            $allowedMatches = array_values(array_filter(array_keys($matches[0]), function($key) {
+                return !is_numeric($key);
+            }));
+            $valueMap = array_intersect_key($matches[0], array_flip($allowedMatches));
+        }
+
+        $typeMap = $this->getRouteParameterNameToTypeMap($route->getPath());
+
+        $query = parse_url($route->getPath(), PHP_URL_QUERY);
+        if ($query != null) {
+            $queryParameters = array();
+            $parameters = $request->getRequestParameters();
+            parse_str($query, $queryParameters);
+            foreach ($queryParameters as $queryName => $variable) {
+                $parsed = $this->extractParameterInfo($variable);
+                if (!isset($parsed[0])) continue;
+                $actionName = $parsed[0]['name'];
+                $valueMap[$actionName] = $parameters[$queryName];
+            }
+        }
+
         array_walk($valueMap, function(&$value, $key) use ($typeMap) {
             // TODO: register default parameter type string
             if ($typeMap[$key] == 'string') return;
             $parameter = $this->parameterFactory->getParameterFromType($typeMap[$key]);
             $value = $parameter->transformValue($value);
         });
+
+        $valueMap = $valueMap + $request->getRequestParameters();
         return $valueMap;
     }
 }
