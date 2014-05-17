@@ -29,7 +29,7 @@ class DefaultRouteFactory implements IRouteFactory {
     {
         $routes = array();
         foreach ($this->controllers as $controller) {
-            $routes += ClassRoute::fromClassName($controller, $this->classFactory);
+            $routes = array_merge($routes, ClassRoute::fromClassName($controller, $this->classFactory));
         }
         return $routes;
     }
