@@ -89,7 +89,8 @@ class DefaultRouteMatcher implements IRouteMatcher {
     private function doesMatchRoute(IRequest $request, IRoute $route) {
         if ($route->getMethod() != null && $request->getMethod() != $route->getMethod()) return false;
 
-        return (bool)preg_match($this->getRouteRegularExpression($route), $request->getPath());
+        $requestPath = parse_url($request->getPath(), PHP_URL_PATH);
+        return (bool)preg_match($this->getRouteRegularExpression($route), $requestPath);
     }
 
     /**
