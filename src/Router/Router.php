@@ -81,7 +81,7 @@ class Router {
             $controller->afterRoute($routeOrderedParams, $response);
         }
 
-        if (!is_string($response->getContent())) {
+        if ($response->getContent() !== null && !is_string($response->getContent())) {
             throw new Exceptions\ResponseContentIsNotStringException();
         }
 
