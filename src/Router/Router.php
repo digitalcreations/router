@@ -56,7 +56,7 @@ class Router {
         $route = $this->routeMatcher->findRoute($request, $this->routes);
         $routeOrderedParams = $this->routeMatcher->extractParameters($request, $route);
         $controller = $route->getController();
-        if ($controller != null) {
+        if ($controller instanceof IController) {
             $controller->setRequest($request);
             $controller->beforeRoute($routeOrderedParams);
         }
@@ -77,7 +77,7 @@ class Router {
             $response = $result;
         }
 
-        if ($controller != null) {
+        if ($controller instanceof IController) {
             $controller->afterRoute($routeOrderedParams, $response);
         }
 
