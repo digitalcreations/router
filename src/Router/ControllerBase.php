@@ -51,4 +51,16 @@ abstract class ControllerBase implements IController {
     function getRequest() {
         return $this->request;
     }
+
+    /**
+     * @param string $location URL (relative if you want) to where you want to redirect the user
+     * @param int $statusCode The HTTP status code to send. Defaults to 202 Accepted.
+     * @return IResponse Return this from your controller
+     */
+    function redirect($location, $statusCode = \DC\Router\StatusCodes::HTTP_ACCEPTED) {
+        $response = new Response();
+        $response->setStatusCode($statusCode);
+        $response->setCustomHeader('Location', $location);
+        return $response;
+    }
 }
