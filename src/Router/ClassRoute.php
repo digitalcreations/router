@@ -14,21 +14,27 @@ class ClassRoute implements IRoute {
 
     private $method;
     private $path;
+
+    /**
+     * @var \DC\Router\IController
+     */
+    private $controller;
+
     /**
      * @var \DC\Router\IClassFactory
      */
     private $classFactory;
 
-    function __construct($class, $function, \DC\Router\IClassFactory $classFactory)
+    function __construct($class, $function, $httpMethod, $path, \DC\Router\IClassFactory $classFactory)
     {
         if (!class_exists($class)) {
             throw new \InvalidArgumentException("No such class: $class");
         }
         $this->class = $class;
         $this->function = $function;
+        $this->method = $httpMethod;
+        $this->path = $path;
         $this->classFactory = $classFactory;
-
-        $this->getRoutePartsFromComment();
     }
 
     private function getRoutePartsFromComment() {
@@ -61,7 +67,10 @@ class ClassRoute implements IRoute {
      */
     function getController()
     {
-        return $this->classFactory->constructClass($this->class);
+        if ($this->controller == null) {
+            $this->controller = $this->classFactory->constructClass($this->class);
+        }
+        return $this->controller;
     }
 
     /**
@@ -74,15 +83,17 @@ class ClassRoute implements IRoute {
 
     private static function getPartsFromReflectionMethod(\ReflectionMethod $method) {
         $comment = $method->getDocComment();
-        if (preg_match('%^\s*\*\s*@route\s+(?:(?P<method>POST|GET|PUT|HEAD)\s+)?(?P<route>/?(?::?[a-z0-9_.()[\]{}]+/?)*\$?)\s*$%im', $comment, $result))
+        if (preg_match_all('%^\s*\*\s*@route\s+(?:(?P<method>POST|GET|PUT|HEAD)\s+)?(?P<route>/?(?::?[a-z0-9_.()[\]{}]+/?)*\$?)\s*$%im', $comment, $result, PREG_SET_ORDER))
         {
-            return array(
-                'function' => $method->getName(),
-                'method' => empty($result['method']) ? null : strtoupper($result['method']),
-                'path' => $result['route']
-            );
+            return array_map(function($r) use ($method) {
+                return array(
+                    'function' => $method->getName(),
+                    'method' => empty($r['method']) ? null : strtoupper($r['method']),
+                    'path' => $r['route']
+                );
+            }, $result);
         } else {
-            return null;
+            return array();
         }
     }
 
@@ -94,11 +105,14 @@ class ClassRoute implements IRoute {
     public static function fromClassName($className, \DC\Router\IClassFactory $classFactory) {
         $reflectionClass = new \ReflectionClass($className);
         $reflectionMethods = $reflectionClass->getMethods();
-        $eligibleMethods = array_filter($reflectionMethods, function($method) {
-            return self::getPartsFromReflectionMethod($method) != null;
-        });
-        return array_map(function($method) use ($className, $classFactory) {
-            return new ClassRoute($className, $method->getName(), $classFactory);
-        }, $eligibleMethods);
+        $parts = array_map(array('\DC\Router\ClassRoute', 'getPartsFromReflectionMethod'), $reflectionMethods);
+
+        $routes = array();
+        foreach ($parts as $partRoutes) {
+            foreach ($partRoutes as $partRoute) {
+                $routes[] = new ClassRoute($className, $partRoute['function'], $partRoute['method'], $partRoute['path'], $classFactory);
+            }
+        }
+        return $routes;
     }
 }

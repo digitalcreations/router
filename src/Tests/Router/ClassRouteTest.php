@@ -6,6 +6,7 @@ class ClassRouteTestController extends \DC\Router\ControllerBase {
     public $invoked = false;
     /**
      * @route GET /foo
+     * @route GET /bar
      */
     public function route() {
         $this->invoked = true;
@@ -18,23 +19,26 @@ class ClassRouteTest extends \PHPUnit_Framework_TestCase {
     function testSetup() {
         $mockClassFactory = $this->getMock('\DC\Router\IClassFactory');
 
-        $route = new \DC\Router\ClassRoute('\DC\Tests\Router\ClassRouteTestController', 'route', $mockClassFactory);
-        $this->assertEquals('GET', $route->getMethod());
-        $this->assertEquals('/foo', $route->getPath());
+        $routes = \DC\Router\ClassRoute::fromClassName('\DC\Tests\Router\ClassRouteTestController', $mockClassFactory);
+
+        $this->assertEquals('GET', $routes[0]->getMethod());
+        $this->assertEquals('/foo', $routes[0]->getPath());
+        $this->assertEquals('GET', $routes[1]->getMethod());
+        $this->assertEquals('/bar', $routes[1]->getPath());
     }
 
     /**
      * @expectedException \InvalidArgumentException
      */
     function testThrowsOnUnqualifiedClassName() {
-        new \DC\Router\ClassRoute('SomeRoutable', 'route', $this->getMock('\DC\Router\IClassFactory'));
+        new \DC\Router\ClassRoute('SomeRoutable', 'route', 'GET', '/bar', $this->getMock('\DC\Router\IClassFactory'));
     }
 
     function testFromClassNamePicksOnlyDecoratedMethods() {
         $mockClassFactory = $this->getMock('\DC\Router\IClassFactory');
 
         $routes = \DC\Router\ClassRoute::fromClassName('\DC\Tests\Router\ClassRouteTestController', $mockClassFactory);
-        $this->assertEquals(1, count($routes));
+        $this->assertEquals(2, count($routes));
     }
 
     function testResolvesRouteGroupUsingContainer() {
@@ -45,7 +49,7 @@ class ClassRouteTest extends \PHPUnit_Framework_TestCase {
             ->with($this->equalTo('\DC\Tests\Router\ClassRouteTestController'))
             ->willReturn(new ClassRouteTestController());
 
-        $route = new \DC\Router\ClassRoute('\DC\Tests\Router\ClassRouteTestController', 'route', $mockClassFactory);
+        $route = new \DC\Router\ClassRoute('\DC\Tests\Router\ClassRouteTestController', 'route', 'GET', '/bar', $mockClassFactory);
         $route->getController();
     }
 
@@ -57,7 +61,7 @@ class ClassRouteTest extends \PHPUnit_Framework_TestCase {
             ->with($this->equalTo('\DC\Tests\Router\ClassRouteTestController'))
             ->willReturn(new ClassRouteTestController());
 
-        $route = new \DC\Router\ClassRoute('\DC\Tests\Router\ClassRouteTestController', 'route', $mockClassFactory);
+        $route = new \DC\Router\ClassRoute('\DC\Tests\Router\ClassRouteTestController', 'route', 'GET', '/bar', $mockClassFactory);
         $callable = $route->getCallable();
 
         $this->assertInstanceOf('\DC\Tests\Router\ClassRouteTestController', $callable[0]);
