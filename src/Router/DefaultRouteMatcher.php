@@ -61,7 +61,7 @@ class DefaultRouteMatcher implements IRouteMatcher {
                 $type = $parts[1];
             }
             return '(?P<' . $name .'>'.
-            (!isset($type) ? '.*' : $this->parameterFactory->getParameterFromType($type)->getRegularExpression()).
+            (!isset($type) ? '[^/]*' : $this->parameterFactory->getParameterFromType($type)->getRegularExpression()).
             ')';
         }, $path).'$#';
     }
