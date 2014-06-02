@@ -11,9 +11,32 @@ class DefaultRouteMatcher implements IRouteMatcher {
      */
     private $parameterFactory;
 
-    public function __construct(IParameterTypeFactory $parameterFactory) {
+    /**
+     * @var \DC\Cache\ICache
+     */
+    private $cache;
+
+    private $regexCache = array();
+    private $regexCacheModified = false;
+
+    /**
+     * @param $parameterFactory IParameterTypeFactory
+     * @param $caches array|\DC\Cache\ICache[]
+     */
+    public function __construct(IParameterTypeFactory $parameterFactory, $caches = array()) {
 
         $this->parameterFactory = $parameterFactory;
+        if (count($caches) > 0) {
+            $this->cache = $caches[0];
+            $this->regexCache = $this->cache->get('DefaultRouteMatcher::regexCache');
+        }
+    }
+
+    function __destruct()
+    {
+        if ($this->regexCacheModified && isset($this->cache)) {
+            $this->cache->set('DefaultRouteMatcher::regexCache', $this->regexCache);
+        }
     }
 
     /**
@@ -44,26 +67,35 @@ class DefaultRouteMatcher implements IRouteMatcher {
      * @return string
      */
     private function getRouteRegularExpression(IRoute $route) {
+        $path = $route->getPath();
+        if (isset($this->regexCache[$path])) {
+            return $this->regexCache[$path];
+        }
+
         // find variable:type between start and end delimiters, limited to what would be a valid PHP variable name
         $findParamsRegex = '#'.self::PARAMETER_DELIMITER_START.'[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(:[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)?'.self::PARAMETER_DELIMITER_END.'#';
 
-        $path = $route->getPath();
         $query = parse_url($path, PHP_URL_QUERY);
         if ($query != null && $query != '') {
             $path = str_replace((string)$query, '', $path);
         }
 
-        return '#^'.preg_replace_callback($findParamsRegex, function($matches) {
-            $replacement = trim($matches[0], '{}');
-            $parts = explode(':', $replacement);
-            $name = $parts[0];
-            if (count($parts) > 1) {
-                $type = $parts[1];
-            }
-            return '(?P<' . $name .'>'.
-            (!isset($type) ? '[^/]*' : $this->parameterFactory->getParameterFromType($type)->getRegularExpression()).
-            ')';
-        }, $path).'$#';
+        $regex = '#^'.preg_replace_callback($findParamsRegex, function($matches) {
+                $replacement = trim($matches[0], '{}');
+                $parts = explode(':', $replacement);
+                $name = $parts[0];
+                if (count($parts) > 1) {
+                    $type = $parts[1];
+                }
+                return '(?P<' . $name .'>'.
+                (!isset($type) ? '[^/]*' : $this->parameterFactory->getParameterFromType($type)->getRegularExpression()).
+                ')';
+            }, $path).'$#';
+
+        $this->regexCache[$path] = $regex;
+        $this->regexCacheModified = true;
+
+        return $regex;
     }
 
     /**

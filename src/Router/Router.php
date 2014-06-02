@@ -4,7 +4,7 @@ namespace DC\Router;
 
 class Router {
     /**
-     * @var \DC\Router\IRouteMatcher
+     * @var IRouteMatcher
      */
     private $routeMatcher;
 
@@ -16,17 +16,26 @@ class Router {
      * @var IResponseWriter
      */
     private $responseWriter;
+    /**
+     * @var IClassFactory
+     */
+    private $classFactory;
 
     /**
-     * @param \DC\Router\IRouteMatcher $routeMatcher
-     * @param \DC\Router\IRouteFactory $routeFactory
-     * @param \Dc\Router\IResponseWriter $responseWriter
+     * @param IRouteMatcher $routeMatcher
+     * @param IRouteFactory $routeFactory
+     * @param IResponseWriter $responseWriter
+     * @param IClassFactory $classFactory
      */
-    function __construct(\DC\Router\IRouteMatcher $routeMatcher, \DC\Router\IRouteFactory $routeFactory, \DC\Router\IResponseWriter $responseWriter)
+    function __construct(IRouteMatcher $routeMatcher,
+                         IRouteFactory $routeFactory,
+                         IResponseWriter $responseWriter,
+                         IClassFactory $classFactory)
     {
         $this->routeMatcher = $routeMatcher;
         $this->routes = $routeFactory->getRoutes();
         $this->responseWriter = $responseWriter;
+        $this->classFactory = $classFactory;
     }
 
     private function getReflectionFunctionForCallable($callable) {
@@ -70,9 +79,16 @@ class Router {
     public function route(IRequest $request) {
         $route = $this->routeMatcher->findRoute($request, $this->routes);
         $callable = $route->getCallable();
+        if (is_array($callable) && is_string($callable[0]) && class_exists($callable[0])) {
+            $instance = $this->classFactory->constructClass($callable[0]);
+            if ($instance instanceof IController) {
+                $callable[0] = $instance;
+                $controller = $instance;
+            }
+        }
+
         $routeOrderedParams = array_merge($this->routeMatcher->extractParameters($request, $route), $this->getDefaultParameterValueMap($callable));
-        $controller = $route->getController();
-        if ($controller instanceof IController) {
+        if (isset($controller) && $controller instanceof IController) {
             $controller->setRequest($request);
             $controller->beforeRoute($routeOrderedParams);
         }
@@ -92,7 +108,7 @@ class Router {
             $response = $result;
         }
 
-        if ($controller instanceof IController) {
+        if (isset($controller) && $controller instanceof IController) {
             $controller->afterRoute($routeOrderedParams, $response);
         }
 

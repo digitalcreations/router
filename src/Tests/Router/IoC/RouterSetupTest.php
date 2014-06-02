@@ -95,8 +95,8 @@ class RouterSetupTest extends \PHPUnit_Framework_TestCase {
         $container->register('\DC\Router\DefaultParameterTypeFactory')->to('\DC\Router\IParameterTypeFactory')->withContainerLifetime();
         $container->register('\DC\Router\DefaultRequest')->to('\DC\Router\IRequest')->withContainerLifetime();
 
-        $container->register(function(\DC\Router\IClassFactory $classFactory) {
-            return new \DC\Router\DefaultRouteFactory(array('\DC\Tests\Router\IoC\ControllerTest'), $classFactory);
+        $container->register(function(\DC\Router\ClassRouteFactory $classRouteFactory) {
+            return new \DC\Router\DefaultRouteFactory(array('\DC\Tests\Router\IoC\ControllerTest'), $classRouteFactory);
         })->to('\DC\Router\IRouteFactory')->withContainerLifetime();
         $container->register('\DC\Router\Router')->withContainerLifetime();
 

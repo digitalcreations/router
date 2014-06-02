@@ -1,22 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
     ],
-    "hash": "07c1e162dcd81af3577cc54b1f12ad92",
+    "hash": "73a32aed53dc99c4ab2b075cee2e91ef",
     "packages": [
         {
             "name": "willdurand/negotiation",
-            "version": "1.3.2",
+            "version": "1.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/willdurand/Negotiation.git",
-                "reference": "cda64e26a980f433ce98200ba1b2301850489aab"
+                "reference": "a98fb6b9808610c1aa326c736893d3d77d9383b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/willdurand/Negotiation/zipball/cda64e26a980f433ce98200ba1b2301850489aab",
-                "reference": "cda64e26a980f433ce98200ba1b2301850489aab",
+                "url": "https://api.github.com/repos/willdurand/Negotiation/zipball/a98fb6b9808610c1aa326c736893d3d77d9383b6",
+                "reference": "a98fb6b9808610c1aa326c736893d3d77d9383b6",
                 "shasum": ""
             },
             "require": {
@@ -53,22 +54,66 @@
                 "header",
                 "negotiation"
             ],
-            "time": "2014-02-26 13:56:25"
+            "time": "2014-05-16 12:34:51"
         }
     ],
     "packages-dev": [
         {
-            "name": "dc/ioc",
-            "version": "v0.1.1",
+            "name": "dc/cache",
+            "version": "0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/digitalcreations/ioc.git",
-                "reference": "4dc4eaeee5b37e4d2612ef46c72bbf7281bc9ef6"
+                "url": "https://github.com/digitalcreations/cache.git",
+                "reference": "3940e571acd963dc3456ce15a519804cc63b8173"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/digitalcreations/ioc/zipball/4dc4eaeee5b37e4d2612ef46c72bbf7281bc9ef6",
-                "reference": "4dc4eaeee5b37e4d2612ef46c72bbf7281bc9ef6",
+                "url": "https://api.github.com/repos/digitalcreations/cache/zipball/3940e571acd963dc3456ce15a519804cc63b8173",
+                "reference": "3940e571acd963dc3456ce15a519804cc63b8173",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DC\\Cache\\": "src/Cache"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Digital Creations AS",
+                    "homepage": "http://www.digitalcreations.no",
+                    "role": "Company"
+                },
+                {
+                    "name": "Vegard Andreas Larsen",
+                    "homepage": "http://vega.rd.no",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Cache interface",
+            "homepage": "http://github.com/digitalcreations/cache",
+            "keywords": [
+                "cache",
+                "memcached"
+            ],
+            "time": "2014-05-04 13:59:47"
+        },
+        {
+            "name": "dc/ioc",
+            "version": "0.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/digitalcreations/ioc.git",
+                "reference": "bb81bf33e75805d14ff4d94a3d6a130d9d128331"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/digitalcreations/ioc/zipball/bb81bf33e75805d14ff4d94a3d6a130d9d128331",
+                "reference": "bb81bf33e75805d14ff4d94a3d6a130d9d128331",
                 "shasum": ""
             },
             "require-dev": {
@@ -104,20 +149,20 @@
                 "inversion of control",
                 "ioc"
             ],
-            "time": "2014-03-26 11:58:20"
+            "time": "2014-06-02 08:12:11"
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.0.6",
+            "version": "2.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "bccecf50645068b44f49a84009e2a0499a500b99"
+                "reference": "58401826c8cfc8fd689b60026e91c337df374bca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/bccecf50645068b44f49a84009e2a0499a500b99",
-                "reference": "bccecf50645068b44f49a84009e2a0499a500b99",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/58401826c8cfc8fd689b60026e91c337df374bca",
+                "reference": "58401826c8cfc8fd689b60026e91c337df374bca",
                 "shasum": ""
             },
             "require": {
@@ -169,7 +214,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2014-04-30 09:01:21"
+            "time": "2014-05-26 14:55:24"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -688,17 +733,17 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.4.4",
+            "version": "v2.5.0",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "65539ecde838f9c0d18b006b2101e3deb4b5c9ff"
+                "reference": "b4b09c68ec2f2727574544ef0173684281a5033c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/65539ecde838f9c0d18b006b2101e3deb4b5c9ff",
-                "reference": "65539ecde838f9c0d18b006b2101e3deb4b5c9ff",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/b4b09c68ec2f2727574544ef0173684281a5033c",
+                "reference": "b4b09c68ec2f2727574544ef0173684281a5033c",
                 "shasum": ""
             },
             "require": {
@@ -707,7 +752,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.5-dev"
                 }
             },
             "autoload": {
@@ -733,7 +778,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2014-04-18 20:37:09"
+            "time": "2014-05-16 14:25:18"
         }
     ],
     "aliases": [
