@@ -50,7 +50,7 @@ class DefaultRouteMatcher implements IRouteMatcher {
         $path = $route->getPath();
         $query = parse_url($path, PHP_URL_QUERY);
         if ($query != null && $query != '') {
-            $path = str_replace($path, (string)$query, '');
+            $path = str_replace((string)$query, '', $path);
         }
 
         return '#^'.preg_replace_callback($findParamsRegex, function($matches) {
