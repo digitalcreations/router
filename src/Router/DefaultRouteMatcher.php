@@ -135,7 +135,8 @@ class DefaultRouteMatcher implements IRouteMatcher {
      */
     function extractParameters(IRequest $request, IRoute $route)
     {
-        preg_match_all($this->getRouteRegularExpression($route), $request->getPath(), $matches, PREG_SET_ORDER);
+        $path = parse_url($request->getPath(), PHP_URL_PATH);
+        preg_match_all($this->getRouteRegularExpression($route), $path, $matches, PREG_SET_ORDER);
         $valueMap = array();
         if (count($matches) > 0) {
             // $matches now contain numeric indices of the groups as well as named indices
