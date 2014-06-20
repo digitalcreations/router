@@ -88,22 +88,30 @@ class Router {
         }
 
         $routeOrderedParams = array_merge($this->getDefaultParameterValueMap($callable), $this->routeMatcher->extractParameters($request, $route));
-        if (isset($controller) && $controller instanceof IController) {
-            $controller->setRequest($request);
-            $controller->beforeRoute($routeOrderedParams);
-        }
-        $order = $this->getCallableParameterOrder($callable);
-        $methodOrderedParams = array_map(function($name) use ($routeOrderedParams) {
-            return $routeOrderedParams[$name];
-        }, $order);
         try {
-            ob_start();
-            $result = call_user_func_array($callable, $methodOrderedParams);
-        } catch (\Exception $e) {
+            if (isset($controller) && $controller instanceof IController) {
+                $controller->setRequest($request);
+                $controller->beforeRoute($routeOrderedParams);
+            }
+        }
+        catch(\Exception $e) {
             $result = $e;
         }
-        finally {
-            $output = ob_get_clean();
+
+        if (!($result instanceof \Exception)) {
+            $order = $this->getCallableParameterOrder($callable);
+            $methodOrderedParams = array_map(function($name) use ($routeOrderedParams) {
+                return $routeOrderedParams[$name];
+            }, $order);
+            try {
+                ob_start();
+                $result = call_user_func_array($callable, $methodOrderedParams);
+            } catch (\Exception $e) {
+                $result = $e;
+            }
+            finally {
+                $output = ob_get_clean();
+            }
         }
 
         if (!($result instanceof IResponse)) {
