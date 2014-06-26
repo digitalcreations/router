@@ -102,7 +102,7 @@ class Router {
         if (!($result instanceof \Exception)) {
             $order = $this->getCallableParameterOrder($callable);
             $methodOrderedParams = array_map(function($name) use ($routeOrderedParams) {
-                return $routeOrderedParams[$name];
+                return isset($routeOrderedParams[$name]) ? $routeOrderedParams[$name] : null;
             }, $order);
             try {
                 ob_start();
