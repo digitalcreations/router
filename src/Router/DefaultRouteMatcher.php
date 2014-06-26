@@ -158,7 +158,7 @@ class DefaultRouteMatcher implements IRouteMatcher {
                 $parsed = $this->extractParameterInfo($variable);
                 if (!isset($parsed[0])) continue;
                 $actionName = $parsed[0]['name'];
-                $valueMap[$actionName] = $parameters[$queryName];
+                $valueMap[$actionName] = isset($parameters[$queryName]) ? $parameters[$queryName] : null;
             }
         }
 
