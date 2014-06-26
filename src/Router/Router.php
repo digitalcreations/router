@@ -87,6 +87,7 @@ class Router {
             }
         }
 
+        $result = null;
         $routeOrderedParams = array_merge($this->getDefaultParameterValueMap($callable), $this->routeMatcher->extractParameters($request, $route));
         try {
             if (isset($controller) && $controller instanceof IController) {
