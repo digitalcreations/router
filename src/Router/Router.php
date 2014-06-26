@@ -128,7 +128,7 @@ class Router {
         }
 
         if ($response->getContent() !== null && !is_string($response->getContent())) {
-            throw new Exceptions\ResponseContentIsNotStringException();
+            throw new Exceptions\ResponseContentIsNotStringException($request);
         }
 
         $this->responseWriter->writeResponse($response);
