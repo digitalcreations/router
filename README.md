@@ -21,6 +21,8 @@ $ composer install
 
 **This package has a suggests `dc/ioc`, but it really is a very strong recommendation. It will be painful to use without it.**
 
+[![Build status](http://teamcity.digitalcreations.no/app/rest/builds/buildType:(id:DcRouter_Build)/statusIcon)](http://teamcity.digitalcreations.no/viewType.html?buildTypeId=DcRouter_Build&guest=1 "Build status")
+
 # Getting started
 
 
