@@ -301,4 +301,251 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
 
         $router->route(new FakeRequest("GET", "/foo"));
     }
+
+    function testGlobalFilterAllHooksAreCalled() {
+        $response = new \DC\Router\Response();
+        $response->setContent('foo');
+
+        $mockRoute = $this->getMock('\DC\Router\IRoute');
+        $mockRoute
+            ->expects($this->once())
+            ->method('getCallable')
+            ->willReturn(function() use ($response) { return $response; });
+
+        $mockRouteMatcher = $this->getMock('\DC\Router\IRouteMatcher');
+        $mockRouteMatcher
+            ->expects($this->once())
+            ->method('findRoute')
+            ->willReturn($mockRoute);
+        $mockRouteMatcher
+            ->expects($this->once())
+            ->method('extractParameters')
+            ->willReturn(array());
+        $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
+        $mockRouteFactory
+            ->expects($this->once())
+            ->method('getRoutes')
+            ->willReturn(array($mockRoute));
+
+        $request = new FakeRequest("GET", "/foo");
+
+        $mockFilter = $this->getMock('\DC\Router\IGlobalFilter');
+        $mockFilter
+            ->expects($this->once())
+            ->method('beforeRouteExecuting')
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]));
+        $mockFilter
+            ->expects($this->once())
+            ->method('routeExecuting')
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]));
+        $mockFilter
+            ->expects($this->once())
+            ->method('afterRouteExecuting')
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo($response));
+        $mockFilter
+            ->expects($this->once())
+            ->method('afterRouteExecuted')
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo($response));
+
+        $router = new \DC\Router\Router($mockRouteMatcher, $mockRouteFactory, $this->getMock('\DC\Router\IResponseWriter'), $this->getMock('\DC\Router\IClassFactory'),
+            [$mockFilter]);
+
+        $router->route($request);
+    }
+
+    function testGlobalFilterReturningResponseFromBeforeRouteExecuting() {
+        $response = new \DC\Router\Response();
+        $response->setContent('foo');
+
+        $mockRoute = $this->getMock('\DC\Router\IRoute');
+        $mockRoute
+            ->expects($this->once())
+            ->method('getCallable')
+            ->willReturn(function() use ($response) { return $response; });
+
+        $mockRouteMatcher = $this->getMock('\DC\Router\IRouteMatcher');
+        $mockRouteMatcher
+            ->expects($this->once())
+            ->method('findRoute')
+            ->willReturn($mockRoute);
+        $mockRouteMatcher
+            ->expects($this->once())
+            ->method('extractParameters')
+            ->willReturn(array());
+        $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
+        $mockRouteFactory
+            ->expects($this->once())
+            ->method('getRoutes')
+            ->willReturn(array($mockRoute));
+
+        $request = new FakeRequest("GET", "/foo");
+
+        $desiredResponse = new \DC\Router\Response();
+        $desiredResponse->setContent('bar');
+
+        $mockFilter = $this->getMock('\DC\Router\IGlobalFilter');
+        $mockFilter
+            ->expects($this->once())
+            ->method('beforeRouteExecuting')
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]))
+            ->willReturn($desiredResponse);
+
+        $mockResponseWriter = $this->getMock('\DC\Router\IResponseWriter');
+        $mockResponseWriter
+            ->expects($this->once())
+            ->method('writeResponse')
+            ->with($this->equalTo($desiredResponse));
+
+        $router = new \DC\Router\Router($mockRouteMatcher, $mockRouteFactory, $mockResponseWriter, $this->getMock('\DC\Router\IClassFactory'),
+            [$mockFilter]);
+
+        $router->route($request);
+    }
+
+    function testGlobalFilterReturningResponseFromRouteExecuting() {
+        $response = new \DC\Router\Response();
+        $response->setContent('foo');
+
+        $mockRoute = $this->getMock('\DC\Router\IRoute');
+        $mockRoute
+            ->expects($this->once())
+            ->method('getCallable')
+            ->willReturn(function() use ($response) { return $response; });
+
+        $mockRouteMatcher = $this->getMock('\DC\Router\IRouteMatcher');
+        $mockRouteMatcher
+            ->expects($this->once())
+            ->method('findRoute')
+            ->willReturn($mockRoute);
+        $mockRouteMatcher
+            ->expects($this->once())
+            ->method('extractParameters')
+            ->willReturn(array());
+        $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
+        $mockRouteFactory
+            ->expects($this->once())
+            ->method('getRoutes')
+            ->willReturn(array($mockRoute));
+
+        $request = new FakeRequest("GET", "/foo");
+
+        $desiredResponse = new \DC\Router\Response();
+        $desiredResponse->setContent('bar');
+
+        $mockFilter = $this->getMock('\DC\Router\IGlobalFilter');
+        $mockFilter
+            ->expects($this->once())
+            ->method('routeExecuting')
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]))
+            ->willReturn($desiredResponse);
+
+        $mockResponseWriter = $this->getMock('\DC\Router\IResponseWriter');
+        $mockResponseWriter
+            ->expects($this->once())
+            ->method('writeResponse')
+            ->with($this->equalTo($desiredResponse));
+
+        $router = new \DC\Router\Router($mockRouteMatcher, $mockRouteFactory, $mockResponseWriter, $this->getMock('\DC\Router\IClassFactory'),
+            [$mockFilter]);
+
+        $router->route($request);
+    }
+
+    function testGlobalFilterReturningResponseFromAfterRouteExecuting() {
+        $response = new \DC\Router\Response();
+        $response->setContent('foo');
+
+        $mockRoute = $this->getMock('\DC\Router\IRoute');
+        $mockRoute
+            ->expects($this->once())
+            ->method('getCallable')
+            ->willReturn(function() use ($response) { return $response; });
+
+        $mockRouteMatcher = $this->getMock('\DC\Router\IRouteMatcher');
+        $mockRouteMatcher
+            ->expects($this->once())
+            ->method('findRoute')
+            ->willReturn($mockRoute);
+        $mockRouteMatcher
+            ->expects($this->once())
+            ->method('extractParameters')
+            ->willReturn(array());
+        $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
+        $mockRouteFactory
+            ->expects($this->once())
+            ->method('getRoutes')
+            ->willReturn(array($mockRoute));
+
+        $request = new FakeRequest("GET", "/foo");
+
+        $desiredResponse = new \DC\Router\Response();
+        $desiredResponse->setContent('bar');
+
+        $mockFilter = $this->getMock('\DC\Router\IGlobalFilter');
+        $mockFilter
+            ->expects($this->once())
+            ->method('afterRouteExecuting')
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo($response))
+            ->willReturn($desiredResponse);
+
+        $mockResponseWriter = $this->getMock('\DC\Router\IResponseWriter');
+        $mockResponseWriter
+            ->expects($this->once())
+            ->method('writeResponse')
+            ->with($this->equalTo($desiredResponse));
+
+        $router = new \DC\Router\Router($mockRouteMatcher, $mockRouteFactory, $mockResponseWriter, $this->getMock('\DC\Router\IClassFactory'),
+            [$mockFilter]);
+
+        $router->route($request);
+    }
+
+    function testGlobalFilterReturningResponseFromAfterRouteExecuted() {
+        $response = new \DC\Router\Response();
+        $response->setContent('foo');
+
+        $mockRoute = $this->getMock('\DC\Router\IRoute');
+        $mockRoute
+            ->expects($this->once())
+            ->method('getCallable')
+            ->willReturn(function() use ($response) { return $response; });
+
+        $mockRouteMatcher = $this->getMock('\DC\Router\IRouteMatcher');
+        $mockRouteMatcher
+            ->expects($this->once())
+            ->method('findRoute')
+            ->willReturn($mockRoute);
+        $mockRouteMatcher
+            ->expects($this->once())
+            ->method('extractParameters')
+            ->willReturn(array());
+        $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
+        $mockRouteFactory
+            ->expects($this->once())
+            ->method('getRoutes')
+            ->willReturn(array($mockRoute));
+
+        $request = new FakeRequest("GET", "/foo");
+
+        $desiredResponse = new \DC\Router\Response();
+        $desiredResponse->setContent('bar');
+
+        $mockFilter = $this->getMock('\DC\Router\IGlobalFilter');
+        $mockFilter
+            ->expects($this->once())
+            ->method('afterRouteExecuted')
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo($response))
+            ->willReturn($desiredResponse);
+
+        $mockResponseWriter = $this->getMock('\DC\Router\IResponseWriter');
+        $mockResponseWriter
+            ->expects($this->once())
+            ->method('writeResponse')
+            ->with($this->equalTo($desiredResponse));
+
+        $router = new \DC\Router\Router($mockRouteMatcher, $mockRouteFactory, $mockResponseWriter, $this->getMock('\DC\Router\IClassFactory'),
+            [$mockFilter]);
+
+        $router->route($request);
+    }
 }
