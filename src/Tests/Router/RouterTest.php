@@ -187,13 +187,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->expects($this->once())
             ->method('findRoute')
             ->willReturn($mockRoute);
-        $mockRouteMatcher
-            ->expects($this->once())
-            ->method('extractParameters')
-            ->willReturn(array(
-                'site' => 'foo',
-                'id' => 3
-            ));
         $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
         $mockRouteFactory
             ->expects($this->once())
