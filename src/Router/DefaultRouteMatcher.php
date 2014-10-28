@@ -130,10 +130,11 @@ class DefaultRouteMatcher implements IRouteMatcher {
      *
      * @param \DC\Router\IRequest|\DC\Router\The $request The requested method
      * @param IRoute $route The route that was matched
+     * @param bool $rawValues Set to true if you want the raw values
      * @internal param \DC\Router\The $path requested path
      * @return array Array with parameter name as the key, and the parameter's final value as the values
      */
-    function extractParameters(IRequest $request, IRoute $route)
+    function extractParameters(IRequest $request, IRoute $route, $rawValues = false)
     {
         $path = parse_url($request->getPath(), PHP_URL_PATH);
         preg_match_all($this->getRouteRegularExpression($route), $path, $matches, PREG_SET_ORDER);
@@ -162,12 +163,14 @@ class DefaultRouteMatcher implements IRouteMatcher {
             }
         }
 
-        array_walk($valueMap, function(&$value, $key) use ($typeMap) {
-            // TODO: register default parameter type string
-            if ($typeMap[$key] == 'string') return;
-            $parameter = $this->parameterFactory->getParameterFromType($typeMap[$key]);
-            $value = $parameter->transformValue($value);
-        });
+        if (!$rawValues) {
+            array_walk($valueMap, function (&$value, $key) use ($typeMap) {
+                // TODO: register default parameter type string
+                if ($typeMap[$key] == 'string') return;
+                $parameter = $this->parameterFactory->getParameterFromType($typeMap[$key]);
+                $value = $parameter->transformValue($value);
+            });
+        }
 
         $valueMap = $valueMap + $request->getRequestParameters();
         return $valueMap;

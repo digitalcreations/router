@@ -88,9 +88,9 @@ class Router {
      * @param null $response
      * @return bool
      */
-    private function applyFilters($method, $request, $route, $routeOrderedParams, $response = null) {
+    private function applyFilters($method, $request, $route, $routeOrderedParams, $rawParams, $response = null) {
         foreach ($this->filters as $filter) {
-            $filterResponse = call_user_func_array([$filter, $method], [$request, $route, $routeOrderedParams, $response]);
+            $filterResponse = call_user_func_array([$filter, $method], [$request, $route, $routeOrderedParams, $rawParams, $response]);
             if ($filterResponse instanceof IResponse) {
                 $this->responseWriter->writeResponse($filterResponse);
                 return true;
@@ -117,8 +117,9 @@ class Router {
 
         $result = null;
         $routeOrderedParams = array_merge($this->getDefaultParameterValueMap($callable), $this->routeMatcher->extractParameters($request, $route));
+        $rawParams = $this->routeMatcher->extractParameters($request, $route, true);
         try {
-            if ($this->applyFilters("beforeRouteExecuting", $request, $route, $routeOrderedParams)) return;
+            if ($this->applyFilters("beforeRouteExecuting", $request, $route, $routeOrderedParams, $rawParams)) return;
 
             if (isset($controller) && $controller instanceof IController) {
                 $controller->setRequest($request);
@@ -137,7 +138,7 @@ class Router {
             try {
                 ob_start();
 
-                if ($this->applyFilters("routeExecuting", $request, $route, $routeOrderedParams)) return;
+                if ($this->applyFilters("routeExecuting", $request, $route, $routeOrderedParams, $rawParams)) return;
 
                 $result = call_user_func_array($callable, $methodOrderedParams);
             } catch (\Exception $e) {
@@ -156,13 +157,13 @@ class Router {
             $response = $result;
         }
 
-        if ($this->applyFilters("afterRouteExecuting", $request, $route, $routeOrderedParams, $response)) return;
+        if ($this->applyFilters("afterRouteExecuting", $request, $route, $routeOrderedParams, $rawParams, $response)) return;
 
         if (isset($controller) && $controller instanceof IController) {
             $controller->afterRoute($routeOrderedParams, $response);
         }
 
-        if ($this->applyFilters("afterRouteExecuted", $request, $route, $routeOrderedParams, $response)) return;
+        if ($this->applyFilters("afterRouteExecuted", $request, $route, $routeOrderedParams, $rawParams, $response)) return;
 
 
         if ($response->getContent() !== null && !is_string($response->getContent())) {

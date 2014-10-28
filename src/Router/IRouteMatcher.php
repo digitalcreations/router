@@ -17,9 +17,10 @@ interface IRouteMatcher {
      *
      * @param IRequest $request
      * @param IRoute $route The route that was matched
+     * @param bool $rawValues Set to true if you want the raw values
      * @internal param \DC\Router\The $method requested method
      * @internal param \DC\Router\The $path requested path
      * @return array Array with parameter name as the key, and the parameter's final value as the values
      */
-    function extractParameters(IRequest $request, IRoute $route);
+    function extractParameters(IRequest $request, IRoute $route, $rawValues = false);
 }

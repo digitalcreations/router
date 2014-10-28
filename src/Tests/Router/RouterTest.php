@@ -78,7 +78,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->method('findRoute')
             ->willReturn($mockRoute);
         $mockRouteMatcher
-            ->expects($this->once())
             ->method('extractParameters')
             ->willReturn(array(
                 'id' => 3,
@@ -116,7 +115,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->method('findRoute')
             ->willReturn($mockRoute);
         $mockRouteMatcher
-            ->expects($this->once())
             ->method('extractParameters')
             ->willReturn(array(
                 'site' => 'foo',
@@ -152,7 +150,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->method('findRoute')
             ->willReturn($mockRoute);
         $mockRouteMatcher
-            ->expects($this->once())
             ->method('extractParameters')
             ->willReturn(array(
                 'site' => 'foo',
@@ -216,7 +213,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->method('findRoute')
             ->willReturn($mockRoute);
         $mockRouteMatcher
-            ->expects($this->once())
             ->method('extractParameters')
             ->willReturn(array());
         $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
@@ -254,7 +250,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->method('findRoute')
             ->willReturn($mockRoute);
         $mockRouteMatcher
-            ->expects($this->once())
             ->method('extractParameters')
             ->willReturn(array());
         $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
@@ -288,7 +283,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->method('findRoute')
             ->willReturn($mockRoute);
         $mockRouteMatcher
-            ->expects($this->once())
             ->method('extractParameters')
             ->willReturn(array());
         $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
@@ -318,7 +312,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->method('findRoute')
             ->willReturn($mockRoute);
         $mockRouteMatcher
-            ->expects($this->once())
             ->method('extractParameters')
             ->willReturn(array());
         $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
@@ -333,19 +326,19 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
         $mockFilter
             ->expects($this->once())
             ->method('beforeRouteExecuting')
-            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]));
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo([]));
         $mockFilter
             ->expects($this->once())
             ->method('routeExecuting')
-            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]));
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo([]));
         $mockFilter
             ->expects($this->once())
             ->method('afterRouteExecuting')
-            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo($response));
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo([]), $this->equalTo($response));
         $mockFilter
             ->expects($this->once())
             ->method('afterRouteExecuted')
-            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo($response));
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo([]), $this->equalTo($response));
 
         $router = new \DC\Router\Router($mockRouteMatcher, $mockRouteFactory, $this->getMock('\DC\Router\IResponseWriter'), $this->getMock('\DC\Router\IClassFactory'),
             [$mockFilter]);
@@ -369,7 +362,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->method('findRoute')
             ->willReturn($mockRoute);
         $mockRouteMatcher
-            ->expects($this->once())
             ->method('extractParameters')
             ->willReturn(array());
         $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
@@ -387,7 +379,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
         $mockFilter
             ->expects($this->once())
             ->method('beforeRouteExecuting')
-            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]))
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo([]))
             ->willReturn($desiredResponse);
 
         $mockResponseWriter = $this->getMock('\DC\Router\IResponseWriter');
@@ -418,7 +410,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->method('findRoute')
             ->willReturn($mockRoute);
         $mockRouteMatcher
-            ->expects($this->once())
             ->method('extractParameters')
             ->willReturn(array());
         $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
@@ -436,7 +427,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
         $mockFilter
             ->expects($this->once())
             ->method('routeExecuting')
-            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]))
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo([]))
             ->willReturn($desiredResponse);
 
         $mockResponseWriter = $this->getMock('\DC\Router\IResponseWriter');
@@ -467,7 +458,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->method('findRoute')
             ->willReturn($mockRoute);
         $mockRouteMatcher
-            ->expects($this->once())
             ->method('extractParameters')
             ->willReturn(array());
         $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
@@ -485,7 +475,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
         $mockFilter
             ->expects($this->once())
             ->method('afterRouteExecuting')
-            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo($response))
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo([]), $this->equalTo($response))
             ->willReturn($desiredResponse);
 
         $mockResponseWriter = $this->getMock('\DC\Router\IResponseWriter');
@@ -516,7 +506,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
             ->method('findRoute')
             ->willReturn($mockRoute);
         $mockRouteMatcher
-            ->expects($this->once())
             ->method('extractParameters')
             ->willReturn(array());
         $mockRouteFactory = $this->getMock('\DC\Router\IRouteFactory');
@@ -534,7 +523,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
         $mockFilter
             ->expects($this->once())
             ->method('afterRouteExecuted')
-            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo($response))
+            ->with($this->equalTo($request), $this->equalTo($mockRoute), $this->equalTo([]), $this->equalTo([]), $this->equalTo($response))
             ->willReturn($desiredResponse);
 
         $mockResponseWriter = $this->getMock('\DC\Router\IResponseWriter');
