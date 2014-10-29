@@ -14,5 +14,6 @@ class DefaultResponseWriter implements IResponseWriter {
             header($name.': '.$value);
         }
         echo $response->getContent();
+        die();
     }
 }
