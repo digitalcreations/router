@@ -56,6 +56,25 @@ class JsonControllerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('foo', $deserialized->name);
     }
 
+    function testParseInputWithCharset() {
+        $mockRequest = $this->getMock('\DC\Router\IRequest');
+        $mockRequest
+            ->expects($this->once())
+            ->method('getBody')
+            ->willReturn('{"id":23,"name":"foo"}');
+        $mockRequest
+            ->expects($this->once())
+            ->method('getHeaders')
+            ->willReturn(array('Content-Type' => 'application/json; charset=utf-8'));
+
+        $controller = new \DC\Router\JsonController();
+        $controller->setRequest($mockRequest);
+
+        $deserialized = $controller->getRequestBodyAsObject();
+        $this->assertEquals(23, $deserialized->id);
+        $this->assertEquals('foo', $deserialized->name);
+    }
+
     /**
      * @expectedException \DC\Router\Exceptions\UnknownContentTypeException
      */

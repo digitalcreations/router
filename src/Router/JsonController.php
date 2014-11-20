@@ -2,8 +2,6 @@
 
 namespace DC\Router;
 
-use DC\Router\Exceptions\UnknownContentTypeException;
-
 class JsonController extends ControllerBase {
     /**
      * @inject
@@ -34,7 +32,9 @@ class JsonController extends ControllerBase {
 
         $headers = $this->getRequest()->getHeaders();
         $contentType = isset($headers['Content-Type']) ? $headers['Content-Type'] : 'application/json';
-        $contentType = substr($contentType, 0, strpos($contentType, ';'));
+        if (strpos($contentType, ';') !== false) {
+            $contentType = substr($contentType, 0, strpos($contentType, ';'));
+        }
         if (in_array($contentType, $this->jsonMimeTypes)) {
             return json_decode($body);
         }
