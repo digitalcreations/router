@@ -81,7 +81,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase {
         $response->setContentType("text/plain");
 
         $response->clearCustomHeaders();
-        $this->assertEquals(array("Content-Type" => "text/plain"), $response->getCustomHeaders());
+        $this->assertEquals(array("Content-Type" => "text/plain; charset=utf-8"), $response->getCustomHeaders());
     }
 }
  

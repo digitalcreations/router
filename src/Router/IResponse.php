@@ -30,8 +30,7 @@ interface IResponse {
     function setContent($content);
 
     /**
-     * Set the content type. Convenience method for
-     *   $this->setCustomHeader('Content-Type', $mime);
+     * Set the content type. Convenience method for managing the charset and content type separately.
      *
      * @param string $mime
      */
@@ -41,6 +40,18 @@ interface IResponse {
      * @return string MIME type
      */
     function getContentType();
+
+    /**
+     * Set the charset. Convenience method for managing the charset and content type separately.
+     *
+     * @param $charset
+     */
+    function setCharset($charset);
+
+    /**
+     * @return string
+     */
+    function getCharset();
 
     /**
      * @return string[string] Array of names to values

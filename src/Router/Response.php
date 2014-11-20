@@ -7,6 +7,8 @@ class Response implements IResponse {
     private $content;
     private $statusCode = StatusCodes::HTTP_OK;
     private $headers = array();
+    private $charset = Charset::UTF8;
+    private $contentType = ContentType::HTML;
 
     /**
      * Return the status code this should return
@@ -54,6 +56,11 @@ class Response implements IResponse {
         $this->checkStatusCodeAndContent();
     }
 
+    private function setContentTypeHeader() {
+        $this->removeCustomHeader("Content-Type");
+        $this->setCustomHeader("Content-Type", sprintf("%s; charset=%s", $this->getContentType(), $this->getCharset()));
+    }
+
     /**
      * Set the content type. Convenience method for
      *   $this->removeCustomHeader('Content-Type');
@@ -63,8 +70,8 @@ class Response implements IResponse {
      */
     function setContentType($mime)
     {
-        $this->removeCustomHeader('Content-Type');
-        $this->setCustomHeader('Content-Type', $mime);
+        $this->contentType = $mime;
+        $this->setContentTypeHeader();
     }
 
     /**
@@ -72,7 +79,7 @@ class Response implements IResponse {
      */
     function getContentType()
     {
-        return $this->getCustomHeaders()['Content-Type'];
+        return $this->contentType;
     }
 
     /**
@@ -130,10 +137,24 @@ class Response implements IResponse {
      */
     function clearCustomHeaders()
     {
-        $contentType = $this->getContentType();
-        $this->headers = array();
-        if ($contentType != null) {
-            $this->setContentType($contentType);
-        }
+        $this->headers = [];
+        $this->setContentTypeHeader();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    function setCharset($charset)
+    {
+        $this->charset = $charset;
+        $this->setContentTypeHeader();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    function getCharset()
+    {
+        return $this->charset;
     }
 }
