@@ -47,4 +47,12 @@ abstract class ScalarParameterTypeBase implements \DC\Router\IParameterType {
         settype($value, $this->getType());
         return $value;
     }
+
+    /**
+     * @return string Scalar type that the parameter expects.
+     */
+    function getInputType()
+    {
+        return $this->getType();
+    }
 }

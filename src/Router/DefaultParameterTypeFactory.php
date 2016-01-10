@@ -19,7 +19,6 @@ class DefaultParameterTypeFactory implements IParameterTypeFactory {
         }
     }
 
-
     /**
      * @param $type string The type to find
      * @return \DC\Router\IParameterType

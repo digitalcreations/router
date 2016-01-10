@@ -8,11 +8,10 @@ class RouterSetup {
      *
      * @param \DC\IoC\Container $container
      * @param string[] $controllers
-     * @return \DC\IoC\Router
+     * @return \DC\Router\Router
      */
-    static function setup(\DC\IoC\Container $container, $controllers)
+    static function setup(\DC\IoC\Container $container, $controllers, \DC\Router\Swagger\Options $swaggerOptions = null)
     {
-
         $container->register(new ClassFactory($container))->to('\DC\Router\IClassFactory');
         $container->register('\DC\Router\DefaultRouteMatcher')->to('\DC\Router\IRouteMatcher')->withContainerLifetime();
         $container->register('\DC\Router\DefaultResponseWriter')->to('\DC\Router\IResponseWriter')->withContainerLifetime();
@@ -22,11 +21,20 @@ class RouterSetup {
         $container->register('\DC\Router\ParameterTypes\BoolParameterType')->to('\DC\Router\IParameterType')->withContainerLifetime();
         $container->register('\DC\Router\ParameterTypes\FloatParameterType')->to('\DC\Router\IParameterType')->withContainerLifetime();
         $container->register('\DC\Router\ParameterTypes\IntParameterType')->to('\DC\Router\IParameterType')->withContainerLifetime();
+        $container->register('\DC\Router\ParameterTypes\StringParameterType')->to('\DC\Router\IParameterType')->withContainerLifetime();
 
         $container->register(function(\DC\Router\ClassRouteFactory $classRouteFactory) use ($controllers) {
             return new \DC\Router\DefaultRouteFactory($controllers, $classRouteFactory);
         })->to('\DC\Router\IRouteFactory')->withContainerLifetime();
         $container->register('\DC\Router\Router')->withContainerLifetime();
+
+        \phpDocumentor\Reflection\DocBlock\Tag::registerTagHandler(\DC\Router\BodyTag::$name, '\DC\Router\BodyTag');
+
+        if ($swaggerOptions != null) {
+            \phpDocumentor\Reflection\DocBlock\Tag::registerTagHandler(\DC\Router\Swagger\SwaggerExcludeTag::$name, '\DC\Router\Swagger\SwaggerExcludeTag');
+
+            $container->register($swaggerOptions);
+        }
 
         return $container->resolve('\DC\Router\Router');
     }
@@ -36,12 +44,12 @@ class RouterSetup {
      *
      * @param \DC\IoC\Container $container
      * @param string[] $controllers
-     * @return \DC\IoC\Router
+     * @return \DC\Router\Router
      * @codeCoverageIgnore
      */
-    static function route(\DC\IoC\Container $container, $controllers)
+    static function route(\DC\IoC\Container $container, $controllers, \DC\Router\Swagger\Options $swaggerOptions = null)
     {
-        $router = self::setup($container, $controllers);
+        $router = self::setup($container, $controllers, $swaggerOptions);
         $router->route($container->resolve('\DC\Router\IRequest'));
         return $router;
     }

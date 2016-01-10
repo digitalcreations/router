@@ -14,19 +14,40 @@ class JsonController extends ControllerBase {
         'application/x-json'
     );
 
+    /**
+     * @inject
+     * @var \DC\JSON\Serializer
+     */
+    private $serializer;
+
+    private function getSerializer() {
+        if (!isset($this->serializer)) {
+            $this->serializer = new \DC\JSON\Serializer();
+        }
+        return $this->serializer;
+    }
+
     function afterRoute(array $params, IResponse $response)
     {
         $acceptHeader = $this->getRequest()->getHeaders()['Accept'];
         $format = $this->formatNegotiator->getBestFormat($acceptHeader, $this->jsonMimeTypes);
 
         $content = $response->getContent();
-        $response->setContent(json_encode($content));
+        $response->setContent($this->getSerializer()->serialize($content));
+        if ($format == null) {
+            $format = "application/json";
+        }
         $response->setContentType($format);
 
         parent::afterRoute($params, $response);
     }
 
-    function getRequestBodyAsObject() {
+    /**
+     * @param string|null $class The class you want the body deserialized to.
+     * @return mixed|null
+     * @throws Exceptions\UnknownContentTypeException
+     */
+    function getRequestBodyAsObject($class = null) {
         $body = $this->getRequest()->getBody();
         if ($body == null) return null;
 
@@ -36,7 +57,12 @@ class JsonController extends ControllerBase {
             $contentType = substr($contentType, 0, strpos($contentType, ';'));
         }
         if (in_array($contentType, $this->jsonMimeTypes)) {
-            return json_decode($body);
+            if (!isset($class)) {
+                return json_decode($body);
+            }
+            else {
+                return $this->getSerializer()->deserialize($body, $class);
+            }
         }
 
         throw new Exceptions\UnknownContentTypeException($headers['Content-Type']);

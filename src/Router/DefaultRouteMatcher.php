@@ -18,18 +18,24 @@ class DefaultRouteMatcher implements IRouteMatcher {
 
     private $regexCache = array();
     private $regexCacheModified = false;
+    /**
+     * @var \DC\JSON\Serializer
+     */
+    private $serializer;
 
     /**
      * @param $parameterFactory IParameterTypeFactory
      * @param $caches array|\DC\Cache\ICache[]
+     * @param \DC\JSON\Serializer $serializer
      */
-    public function __construct(IParameterTypeFactory $parameterFactory, $caches = array()) {
+    public function __construct(IParameterTypeFactory $parameterFactory, $caches = array(), \DC\JSON\Serializer $serializer) {
 
         $this->parameterFactory = $parameterFactory;
         if (count($caches) > 0) {
             $this->cache = $caches[0];
             $this->regexCache = $this->cache->get('DefaultRouteMatcher::regexCache');
         }
+        $this->serializer = $serializer;
     }
 
     function __destruct()
@@ -104,7 +110,7 @@ class DefaultRouteMatcher implements IRouteMatcher {
      */
     private function extractParameterInfo($path) {
         // find variable:type between start and end delimiters, limited to what would be a valid PHP variable name
-        $findParamsRegex = '#'.self::PARAMETER_DELIMITER_START.'(?P<name>[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)(?P<type>:[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)?'.self::PARAMETER_DELIMITER_END.'#';
+        $findParamsRegex = '#'.self::PARAMETER_DELIMITER_START.'(?P<name>[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*):?(?P<type>[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)?'.self::PARAMETER_DELIMITER_END.'#';
         preg_match_all($findParamsRegex, $path, $matches, PREG_SET_ORDER);
         return $matches;
     }
@@ -125,13 +131,102 @@ class DefaultRouteMatcher implements IRouteMatcher {
         return (bool)preg_match($this->getRouteRegularExpression($route), $requestPath);
     }
 
+    private function getParameterInfoInternal(IRoute $route) {
+        $pathWithoutQuery = parse_url($route->getPath(), PHP_URL_PATH);
+
+        $parameterHashmap = $this->getRouteParameterNameToTypeMap($pathWithoutQuery);
+        $parameters = [];
+        foreach ($parameterHashmap as $name => $type) {
+            $parameters[] = ['\DC\Router\Parameters\PathRouteParameter', $name, $type];
+        }
+
+        $query = parse_url($route->getPath(), PHP_URL_QUERY);
+        if ($query != null) {
+            $queryParameters = [];
+            parse_str($query, $queryParameters);
+            foreach ($queryParameters as $queryName => $variable) {
+                $parsed = $this->extractParameterInfo($variable);
+                if (!isset($parsed[0])) continue;
+                $parameters[] = ['\DC\Router\Parameters\QueryRouteParameter', $parsed[0]['name'], $queryName, $parsed[0]['type']];
+            }
+        }
+
+        // create the body parameter
+        $callable = $route->getCallable();
+        $reflector = new \DC\Router\Swagger\Reflector();
+        $reflection = $reflector->getReflectionFunctionForCallable($callable);
+        $reflectionParameters = $reflection->getParameters();
+        $phpdoc = new \phpDocumentor\Reflection\DocBlock($reflection);
+
+        $bodyParameterName = "body";
+        $bodyTags = $phpdoc->getTagsByName(\DC\Router\BodyTag::$name);
+        $bodyTag = reset($bodyTags);
+        if ($bodyTag != null) {
+            $bodyParameterName = $bodyTag->getVariableName();
+        }
+
+        $bodyParameters = array_filter($reflectionParameters, function (\ReflectionParameter $reflection) use ($bodyParameterName) {
+            return $reflection->getName() == $bodyParameterName;
+        });
+        if (count($bodyParameters) > 0) {
+            // check for type hints first
+            $className = '\stdClass';
+            /** @var \ReflectionParameter $parameter */
+            $parameter = reset($bodyParameters);
+            if ($parameter->getClass() != null) {
+                $className = $parameter->getClass()->getName();
+            } else {
+                // no type hints, check documentation
+                $paramTags = $phpdoc->getTagsByName("param");
+                $paramTags = array_filter($paramTags, function (\phpDocumentor\Reflection\DocBlock\Tag\ParamTag $tag) use ($bodyParameterName) {
+                    return $tag->getName() == '$' . $bodyParameterName;
+                });
+                $paramTag = reset($paramTags);
+                if ($paramTag != null) {
+                    /** @var \phpDocumentor\Reflection\DocBlock\Tag\ParamTag $paramTag */
+                    $className = $paramTag->getType();
+                }
+            }
+            $parameters[] = ['\DC\Router\Parameters\BodyRouteParameter', $bodyParameterName, $className];
+        }
+        return $parameters;
+    }
+
+    /**
+     * @param IRoute $route
+     * @return \DC\Router\Parameters\RouteParameterBase[]
+     */
+    function getParameterInfo(IRoute $route)
+    {
+        if ($this->cache != null) {
+            $cacheKey = "route_" . $route->getMethod() . "_" . $route->getPath();
+            $parameters = $this->cache->getWithFallback($cacheKey, function() use ($route) { return $this->getParameterInfoInternal($route); });
+        }
+        else {
+            $parameters = $this->getParameterInfoInternal($route);
+        }
+
+        foreach ($parameters as $key => $parameter) {
+            $class = $parameter[0];
+            $parameter[0] = $route;
+            if ($class == '\DC\Router\Parameters\BodyRouteParameter') {
+                $parameter[] = $this->serializer;
+            }
+            else {
+                $parameter[count($parameter) - 1] = $this->parameterFactory->getParameterFromType($parameter[count($parameter) - 1]);
+            }
+            $parameters[$key] = new $class(...$parameter);
+        }
+
+        return $parameters;
+    }
+
     /**
      * Find the values of the parameters for a given route
      *
-     * @param \DC\Router\IRequest|\DC\Router\The $request The requested method
+     * @param \DC\Router\IRequest $request The requested method
      * @param IRoute $route The route that was matched
      * @param bool $rawValues Set to true if you want the raw values
-     * @internal param \DC\Router\The $path requested path
      * @return array Array with parameter name as the key, and the parameter's final value as the values
      */
     function extractParameters(IRequest $request, IRoute $route, $rawValues = false)
@@ -148,31 +243,16 @@ class DefaultRouteMatcher implements IRouteMatcher {
             $valueMap = array_intersect_key($matches[0], array_flip($allowedMatches));
         }
 
-        $typeMap = $this->getRouteParameterNameToTypeMap($route->getPath());
-
-        $query = parse_url($route->getPath(), PHP_URL_QUERY);
-        if ($query != null) {
-            $queryParameters = array();
-            $parameters = $request->getRequestParameters();
-            parse_str($query, $queryParameters);
-            foreach ($queryParameters as $queryName => $variable) {
-                $parsed = $this->extractParameterInfo($variable);
-                if (!isset($parsed[0])) continue;
-                $actionName = $parsed[0]['name'];
-                $valueMap[$actionName] = isset($parameters[$queryName]) ? $parameters[$queryName] : null;
-            }
+        if ($rawValues) {
+            return $valueMap;
         }
 
-        if (!$rawValues) {
-            array_walk($valueMap, function (&$value, $key) use ($typeMap) {
-                // TODO: register default parameter type string
-                if ($typeMap[$key] == 'string') return;
-                $parameter = $this->parameterFactory->getParameterFromType($typeMap[$key]);
-                $value = $parameter->transformValue($value);
-            });
+        $parameters = $this->getParameterInfo($route);
+
+        foreach ($parameters as $parameter) {
+            $valueMap[$parameter->getInternalName()] = $parameter->getValueForRequest($request, $valueMap);
         }
 
-        $valueMap = $valueMap + $request->getRequestParameters();
         return $valueMap;
     }
 }

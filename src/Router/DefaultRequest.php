@@ -1,7 +1,6 @@
 <?php
 
 namespace DC\Router;
-use string;
 
 /**
  * @codeCoverageIgnore

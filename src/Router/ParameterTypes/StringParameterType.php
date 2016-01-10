@@ -1,22 +1,32 @@
 <?php
 
-namespace DC\Router;
+namespace DC\Router\ParameterTypes;
 
-interface IParameterType {
+class StringParameterType implements \DC\Router\IParameterType {
+
     /**
      * @return string Short string that identifies this type
      */
-    function getType();
+    function getType()
+    {
+        return "string";
+    }
 
     /**
      * @return string Scalar type that the parameter expects.
      */
-    function getInputType();
+    function getInputType()
+    {
+        return "string";
+    }
 
     /**
      * @return string The partial regular expression to allow for this parameter
      */
-    function getRegularExpression();
+    function getRegularExpression()
+    {
+        return ".*";
+    }
 
     /**
      * Allows you to transform the parameter value before handing it over to a route.
@@ -29,5 +39,8 @@ interface IParameterType {
      * @param $value string The incoming value
      * @return mixed Return the value as transformed a
      */
-    function transformValue($value);
-} 
+    function transformValue($value)
+    {
+        return $value;
+    }
+}
