@@ -11,6 +11,9 @@ class DefaultController extends \DC\Router\ControllerBase {
     }
 }
 
+/**
+ * Cats. They're awesome.
+ */
 class CatsController extends \DC\Router\JsonController {
     private $repository;
 
@@ -21,6 +24,18 @@ class CatsController extends \DC\Router\JsonController {
             2 => new \Cat(2, "Squishy"),
             3 => new \Cat(3, "Angry")
         ];
+    }
+
+    /**
+     * Record the birth of a cat.
+     *
+     * @route POST /api/cats
+     * @param Cat $cat
+     * @body $cat
+     * @return Cat
+     */
+    public function postCat(\Cat $cat) {
+        return $cat;
     }
 
     /**
@@ -47,7 +62,7 @@ class CatsController extends \DC\Router\JsonController {
     }
 
     /**
-     * @route GET /api/cats?where={name}
+     * @route GET /api/cats/search?q={name}
      * @param string $name Name
      * @return Cat[]
      */
@@ -88,8 +103,11 @@ class Cat {
 }
 
 $container = new \DC\IoC\Container();
+$container->register(function() {
+    return new \DC\Cache\Implementations\Memcached\MemcacheConfiguration('localhost', 11211);
+})->to('\DC\Cache\Implementations\Memcached\MemcacheConfiguration')->withContainerLifetime();
+$container->register('\DC\Cache\Implementations\Memcached\Cache')->to('\DC\Cache\ICache')->withContainerLifetime();
+
+\DC\JSON\IoC\SerializerSetup::setup($container);
 \DC\Router\IoC\RouterSetup::route($container,
-    ['\CatsController', '\DC\Router\Swagger\SwaggerController'],
-    new \DC\Router\Swagger\Options(
-        new \DC\Router\Swagger\ComposerPackage(realpath("../composer.json"))
-    ));
+    ['\DefaultController', '\CatsController']);

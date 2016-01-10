@@ -10,7 +10,7 @@ class RouterSetup {
      * @param string[] $controllers
      * @return \DC\Router\Router
      */
-    static function setup(\DC\IoC\Container $container, $controllers, \DC\Router\Swagger\Options $swaggerOptions = null)
+    static function setup(\DC\IoC\Container $container, $controllers)
     {
         $container->register(new ClassFactory($container))->to('\DC\Router\IClassFactory');
         $container->register('\DC\Router\DefaultRouteMatcher')->to('\DC\Router\IRouteMatcher')->withContainerLifetime();
@@ -30,12 +30,6 @@ class RouterSetup {
 
         \phpDocumentor\Reflection\DocBlock\Tag::registerTagHandler(\DC\Router\BodyTag::$name, '\DC\Router\BodyTag');
 
-        if ($swaggerOptions != null) {
-            \phpDocumentor\Reflection\DocBlock\Tag::registerTagHandler(\DC\Router\Swagger\SwaggerExcludeTag::$name, '\DC\Router\Swagger\SwaggerExcludeTag');
-
-            $container->register($swaggerOptions);
-        }
-
         return $container->resolve('\DC\Router\Router');
     }
 
@@ -47,9 +41,9 @@ class RouterSetup {
      * @return \DC\Router\Router
      * @codeCoverageIgnore
      */
-    static function route(\DC\IoC\Container $container, $controllers, \DC\Router\Swagger\Options $swaggerOptions = null)
+    static function route(\DC\IoC\Container $container, $controllers)
     {
-        $router = self::setup($container, $controllers, $swaggerOptions);
+        $router = self::setup($container, $controllers);
         $router->route($container->resolve('\DC\Router\IRequest'));
         return $router;
     }

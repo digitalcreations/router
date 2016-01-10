@@ -1,6 +1,6 @@
 {
     "name": "dc/router",
-    "version": "0.1.3",
+    "version": "0.2.0",
     "description": "HTTP router",
     "keywords": ["http", "router", "routing"],
     "homepage": "http://github.com/digitalcreations/router",
@@ -24,19 +24,21 @@
     },
     "suggest": {
         "dc/ioc": "0.*",
-        "dc/cache": "0.*"
+        "dc/cache": "0.*",
+        "dc/router-swagger": "0.*"
     },
     "require": {
         "willdurand/negotiation": "1.3.*",
         "phpdocumentor/reflection-docblock": "2.*",
         "dc/json": "dev-master",
-        "php": "5.6"
+        "php": ">=5.6"
     },
     "require-dev": {
         "phpunit/phpunit": "4.0.*",
         "dc/ioc": "0.*",
         "dc/cache": "0.*",
-        "dc/cache-memcached": "dev-master"
+        "dc/cache-memcached": "dev-master",
+        "dc/router-swagger": "dev-master"
     },
     "autoload": {
         "files": ["src/functions.php"],
