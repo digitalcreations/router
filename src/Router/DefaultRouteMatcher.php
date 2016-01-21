@@ -25,7 +25,7 @@ class DefaultRouteMatcher implements IRouteMatcher {
 
     /**
      * @param $parameterFactory IParameterTypeFactory
-     * @param $caches array|\DC\Cache\ICache[]
+     * @param \DC\Cache\ICache[] $caches
      * @param \DC\JSON\Serializer $serializer
      */
     public function __construct(IParameterTypeFactory $parameterFactory, $caches = array(), \DC\JSON\Serializer $serializer) {
@@ -153,7 +153,7 @@ class DefaultRouteMatcher implements IRouteMatcher {
 
         // create the body parameter
         $callable = $route->getCallable();
-        $reflector = new \DC\Router\Swagger\Reflector();
+        $reflector = new \DC\Router\Reflector();
         $reflection = $reflector->getReflectionFunctionForCallable($callable);
         $reflectionParameters = $reflection->getParameters();
         $phpdoc = new \phpDocumentor\Reflection\DocBlock($reflection);

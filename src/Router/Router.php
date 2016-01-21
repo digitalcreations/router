@@ -30,7 +30,7 @@ class Router {
      * @param IRouteFactory $routeFactory
      * @param IResponseWriter $responseWriter
      * @param IClassFactory $classFactory
-     * @param $filters array|\DC\Router\IGlobalFilter[]
+     * @param \DC\Router\IGlobalFilter[] $filters
      */
     function __construct(IRouteMatcher $routeMatcher,
                          IRouteFactory $routeFactory,

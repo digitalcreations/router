@@ -9,7 +9,7 @@ class DefaultParameterTypeFactory implements IParameterTypeFactory {
     private $parameterTypes;
 
     /**
-     * @param $parameterTypes \DC\Router\IParameterType[]
+     * @param \DC\Router\IParameterType[] $parameterTypes
      */
     function __construct($parameterTypes)
     {
