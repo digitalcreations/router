@@ -18,7 +18,11 @@ class PathRouteParameter extends RouteParameterBase {
     function getValueForRequest(\DC\Router\IRequest $request, array $valueMap)
     {
         $value = $valueMap[$this->getInternalName()];
-        return $this->getParameterType()->transformValue($value);
+        $parameterType = $this->getParameterType();
+        if ($parameterType instanceof \DC\Router\IParameterType) {
+            $value = $parameterType->transformValue($value);
+        }
+        return $value;
     }
 
     /**

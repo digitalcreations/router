@@ -134,12 +134,14 @@ class DefaultRouteMatcher implements IRouteMatcher {
     private function getParameterInfoInternal(IRoute $route) {
         $pathWithoutQuery = parse_url($route->getPath(), PHP_URL_PATH);
 
+        // find parameter names embedded in the path
         $parameterHashmap = $this->getRouteParameterNameToTypeMap($pathWithoutQuery);
         $parameters = [];
         foreach ($parameterHashmap as $name => $type) {
             $parameters[] = ['\DC\Router\Parameters\PathRouteParameter', $name, $type];
         }
 
+        // find query parameters listed in route
         $query = parse_url($route->getPath(), PHP_URL_QUERY);
         if ($query != null) {
             $queryParameters = [];
@@ -151,13 +153,27 @@ class DefaultRouteMatcher implements IRouteMatcher {
             }
         }
 
-        // create the body parameter
         $callable = $route->getCallable();
         $reflector = new \DC\Router\Reflector();
         $reflection = $reflector->getReflectionFunctionForCallable($callable);
         $reflectionParameters = $reflection->getParameters();
-        $phpdoc = new \phpDocumentor\Reflection\DocBlock($reflection);
 
+        // find parameters not mentioned in documentation or type hints
+        foreach ($reflectionParameters as $parameter) {
+            if (!isset($parameters[$parameter->getName()])) {
+                $type = $parameter->getClass();
+                if ($type instanceof ReflectionClass) {
+                    $type = $type->getName();
+                }
+                else {
+                    $type = "string";
+                }
+                $parameters[] = ['\DC\Router\Parameters\QueryRouteParameter', $parameter->getName(), $parameter->getName(), $type];
+            }
+        }
+
+        // create the body parameter
+        $phpdoc = new \phpDocumentor\Reflection\DocBlock($reflection);
         $bodyParameterName = "body";
         $bodyTags = $phpdoc->getTagsByName(\DC\Router\BodyTag::$name);
         $bodyTag = reset($bodyTags);
@@ -243,12 +259,13 @@ class DefaultRouteMatcher implements IRouteMatcher {
             $valueMap = array_intersect_key($matches[0], array_flip($allowedMatches));
         }
 
+        $valueMap = array_merge($request->getRequestParameters(), $valueMap);
+
         if ($rawValues) {
             return $valueMap;
         }
 
         $parameters = $this->getParameterInfo($route);
-
         foreach ($parameters as $parameter) {
             $valueMap[$parameter->getInternalName()] = $parameter->getValueForRequest($request, $valueMap);
         }

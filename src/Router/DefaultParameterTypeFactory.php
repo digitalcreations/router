@@ -25,6 +25,9 @@ class DefaultParameterTypeFactory implements IParameterTypeFactory {
      */
     function getParameterFromType($type)
     {
-        return $this->parameterTypes[$type];
+        if (!is_array($type) && !is_object($type) && isset($this->parameterTypes[$type])) {
+            return $this->parameterTypes[$type];
+        }
+        return null;
     }
 }
