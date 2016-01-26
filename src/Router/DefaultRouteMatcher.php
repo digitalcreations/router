@@ -138,7 +138,7 @@ class DefaultRouteMatcher implements IRouteMatcher {
         $parameterHashmap = $this->getRouteParameterNameToTypeMap($pathWithoutQuery);
         $parameters = [];
         foreach ($parameterHashmap as $name => $type) {
-            $parameters[] = ['\DC\Router\Parameters\PathRouteParameter', $name, $type];
+            $parameters[$name] = ['\DC\Router\Parameters\PathRouteParameter', $name, $type];
         }
 
         // find query parameters listed in route
@@ -149,7 +149,10 @@ class DefaultRouteMatcher implements IRouteMatcher {
             foreach ($queryParameters as $queryName => $variable) {
                 $parsed = $this->extractParameterInfo($variable);
                 if (!isset($parsed[0])) continue;
-                $parameters[] = ['\DC\Router\Parameters\QueryRouteParameter', $parsed[0]['name'], $queryName, $parsed[0]['type']];
+                if (!isset($parsed[0]['type'])) {
+                    $parsed[0]['type'] = 'string';
+                }
+                $parameters[$parsed[0]['name']] = ['\DC\Router\Parameters\QueryRouteParameter', $parsed[0]['name'], $queryName, $parsed[0]['type']];
             }
         }
 
@@ -168,7 +171,7 @@ class DefaultRouteMatcher implements IRouteMatcher {
                 else {
                     $type = "string";
                 }
-                $parameters[] = ['\DC\Router\Parameters\QueryRouteParameter', $parameter->getName(), $parameter->getName(), $type];
+                $parameters[$parameter->getName()] = ['\DC\Router\Parameters\QueryRouteParameter', $parameter->getName(), $parameter->getName(), $type];
             }
         }
 
@@ -203,7 +206,7 @@ class DefaultRouteMatcher implements IRouteMatcher {
                     $className = $paramTag->getType();
                 }
             }
-            $parameters[] = ['\DC\Router\Parameters\BodyRouteParameter', $bodyParameterName, $className];
+            $parameters[$bodyParameterName] = ['\DC\Router\Parameters\BodyRouteParameter', $bodyParameterName, $className];
         }
         return $parameters;
     }

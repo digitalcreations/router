@@ -16,10 +16,10 @@ class QueryRouteParameter extends RouteParameterBase {
      */
     function getValueForRequest(\DC\Router\IRequest $request, array $valueMap)
     {
-        if (!isset($valueMap[$this->getInternalName()])) {
+        if (!isset($valueMap[$this->getQueryName()])) {
             return null;
         }
-        $value = $valueMap[$this->getInternalName()];
+        $value = $valueMap[$this->getQueryName()];
         return $this->getParameterType()->transformValue($value);
     }
 }
