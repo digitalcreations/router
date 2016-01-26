@@ -23,8 +23,8 @@ class RouterSetup {
         $container->register('\DC\Router\ParameterTypes\IntParameterType')->to('\DC\Router\IParameterType')->withContainerLifetime();
         $container->register('\DC\Router\ParameterTypes\StringParameterType')->to('\DC\Router\IParameterType')->withContainerLifetime();
 
-        $container->register(function(\DC\Router\ClassRouteFactory $classRouteFactory) use ($controllers) {
-            return new \DC\Router\DefaultRouteFactory($controllers, $classRouteFactory);
+        $container->register(function(\DC\Router\ClassRouteFactory $classRouteFactory, \DC\Cache\ICache $cache) use ($controllers) {
+            return new \DC\Router\DefaultRouteFactory($controllers, $classRouteFactory, $cache);
         })->to('\DC\Router\IRouteFactory')->withContainerLifetime();
         $container->register('\DC\Router\Router')->withContainerLifetime();
 

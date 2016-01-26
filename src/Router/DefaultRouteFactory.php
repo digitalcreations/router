@@ -17,33 +17,30 @@ class DefaultRouteFactory implements IRouteFactory {
     /**
      * @param $controllers string[] The controllers to register
      * @param ClassRouteFactory $classRouteFactory
-     * @param $cache array|\DC\Cache\ICache[]
+     * @param \DC\Cache\ICache $cache
      */
-    function __construct(array $controllers, ClassRouteFactory $classRouteFactory, $cache = array())
+    function __construct(array $controllers, ClassRouteFactory $classRouteFactory, $cache = null)
     {
         $this->controllers = $controllers;
         $this->classRouteFactory = $classRouteFactory;
-        if (count($cache) > 0) {
-            $this->cache = $cache[0];
-        }
+        $this->cache = $cache;
     }
-
-    private function actualGetRoutes() {
-        $routes = array();
-        foreach ($this->controllers as $controller) {
-            $routes = array_merge($routes, $this->classRouteFactory->routesFromClassName($controller));
-        }
-        return $routes;
-    }
-
     /**
      * @return \DC\Router\IRoute[] All routes
      */
     function getRoutes()
     {
+        $getter = function() {
+            $routes = array();
+            foreach ($this->controllers as $controller) {
+                $routes = array_merge($routes, $this->classRouteFactory->routesFromClassName($controller));
+            }
+            return $routes;
+        };
+
         if ($this->cache != null) {
-            return $this->cache->getWithFallback("allRoutes", array($this, 'actualGetRoutes'));
+            return $this->cache->getWithFallback("allRoutes", $getter);
         }
-        return $this->actualGetRoutes();
+        return $getter();
     }
 }
