@@ -36,10 +36,6 @@ class DefaultParameterTypeFactory implements IParameterTypeFactory {
      */
     function getParameterFromType($type)
     {
-        if ($type == 'string' || $type == 'int' || $type == 'float' || $type == 'boolean') {
-            return null;
-        }
-
         $parameterTypes = $this->getParameterTypes();
         if (!is_array($type) && !is_object($type) && isset($parameterTypes[$type])) {
             return $parameterTypes[$type];
