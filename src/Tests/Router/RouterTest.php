@@ -223,7 +223,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
         $mockClassFactory = $this->getMock('\DC\Router\IClassFactory');
         $mockClassFactory
             ->expects($this->once())
-            ->method('constructClass')
+            ->method('resolve')
             ->willReturn(new FakeController());
 
         $router = new \DC\Router\Router($mockRouteMatcher,

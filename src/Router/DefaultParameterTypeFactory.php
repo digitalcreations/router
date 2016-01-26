@@ -9,14 +9,25 @@ class DefaultParameterTypeFactory implements IParameterTypeFactory {
     private $parameterTypes;
 
     /**
-     * @param \DC\Router\IParameterType[] $parameterTypes
+     * @var IClassFactory
      */
-    function __construct($parameterTypes)
+    private $classFactory;
+
+    function __construct(\DC\Router\IClassFactory $classFactory)
     {
-        $this->parameterTypes = array();
-        foreach ($parameterTypes as $type) {
-            $this->parameterTypes[$type->getType()] = $type;
+        $this->classFactory = $classFactory;
+    }
+
+    private function getParameterTypes() {
+        if ($this->parameterTypes == null) {
+            $parameterTypes = $this->classFactory->resolveAll('\DC\Router\IParameterType');
+
+            $this->parameterTypes = [];
+            foreach ($parameterTypes as $type) {
+                $this->parameterTypes[$type->getType()] = $type;
+            }
         }
+        return $this->parameterTypes;
     }
 
     /**
@@ -25,8 +36,13 @@ class DefaultParameterTypeFactory implements IParameterTypeFactory {
      */
     function getParameterFromType($type)
     {
-        if (!is_array($type) && !is_object($type) && isset($this->parameterTypes[$type])) {
-            return $this->parameterTypes[$type];
+        if ($type == 'string' || $type == 'int' || $type == 'float' || $type == 'boolean') {
+            return null;
+        }
+
+        $parameterTypes = $this->getParameterTypes();
+        if (!is_array($type) && !is_object($type) && isset($parameterTypes[$type])) {
+            return $parameterTypes[$type];
         }
         return null;
     }

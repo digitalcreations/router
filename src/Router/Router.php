@@ -108,7 +108,7 @@ class Router {
         $route = $this->routeMatcher->findRoute($request, $this->routes);
         $callable = $route->getCallable();
         if (is_array($callable) && is_string($callable[0]) && class_exists($callable[0])) {
-            $instance = $this->classFactory->constructClass($callable[0]);
+            $instance = $this->classFactory->resolve($callable[0]);
             if ($instance instanceof IController) {
                 $callable[0] = $instance;
                 $controller = $instance;

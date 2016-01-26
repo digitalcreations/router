@@ -14,8 +14,12 @@ class ClassFactory implements \DC\Router\IClassFactory {
         $this->container = $container;
     }
 
-    function constructClass($name)
+    function resolve($name)
     {
         return $this->container->resolve($name);
+    }
+
+    function resolveAll($name) {
+        return $this->container->resolveAll($name);
     }
 }

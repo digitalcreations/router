@@ -3,5 +3,6 @@
 namespace DC\Router;
 
 interface IClassFactory {
-    function constructClass($name);
+    function resolve($name);
+    function resolveAll($name);
 } 
