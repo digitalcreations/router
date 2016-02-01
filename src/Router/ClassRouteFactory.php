@@ -4,7 +4,7 @@ namespace DC\Router;
 class ClassRouteFactory {
     private static function getPartsFromReflectionMethod(\ReflectionMethod $method) {
         $comment = $method->getDocComment();
-        if (preg_match_all('%^\s*\*\s*@route\s+(?:(?P<method>POST|GET|PUT|HEAD)\s+)?(?P<route>/?(?::?[a-z0-9_.()[\]{}=?&]+/?)*\$?)\s*$%im', $comment, $result, PREG_SET_ORDER))
+        if (preg_match_all('%^\s*\*\s*@route\s+(?:(?P<method>POST|GET|PUT|HEAD|DELETE|OPTIONS|TRACE|SEARCH|CONNECT|PROPFIND|PROPPATCH|PATCH|MKCOL|COPY|MOVE|LOCK|UNLOCK)\s+)?(?P<route>/?(?::?[a-z0-9_.()[\]{}=?&]+/?)*\$?)\s*$%im', $comment, $result, PREG_SET_ORDER))
         {
             return array_map(function($r) use ($method) {
                 return array(
