@@ -74,17 +74,17 @@ class DefaultRouteMatcher implements IRouteMatcher {
      */
     private function getRouteRegularExpression(IRoute $route) {
         $path = $route->getPath();
+        $query = parse_url($path, PHP_URL_QUERY);
+        if ($query != null && $query != '') {
+            $path = str_replace((string)$query, '', $path);
+        }
+
         if (isset($this->regexCache[$path])) {
             return $this->regexCache[$path];
         }
 
         // find variable:type between start and end delimiters, limited to what would be a valid PHP variable name
         $findParamsRegex = '#'.self::PARAMETER_DELIMITER_START.'[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(:[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)?'.self::PARAMETER_DELIMITER_END.'#';
-
-        $query = parse_url($path, PHP_URL_QUERY);
-        if ($query != null && $query != '') {
-            $path = str_replace((string)$query, '', $path);
-        }
 
         $regex = '#^'.preg_replace_callback($findParamsRegex, function($matches) {
                 $replacement = trim($matches[0], '{}');
