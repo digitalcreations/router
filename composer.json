@@ -37,8 +37,7 @@
         "phpunit/phpunit": "4.0.*",
         "dc/ioc": "0.*",
         "dc/cache": "0.*",
-        "dc/cache-memcached": "dev-master",
-        "dc/router-swagger": "dev-master"
+        "dc/cache-memcached": "dev-master"
     },
     "autoload": {
         "files": ["src/functions.php"],
