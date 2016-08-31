@@ -129,30 +129,16 @@ class DefaultRouteMatcherTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testExtractParameters() {
-        $mockParameter = $this->getMock('\DC\Router\IParameterType');
-        $mockParameter
-            ->expects($this->any())
-            ->method('getType')
-            ->willReturn('int');
-
-        $mockParameter
-            ->expects($this->any())
-            ->method('getRegularExpression')
-            ->willReturn('[0-9]+');
-        $mockParameter
-            ->expects($this->any())
-            ->method('transformValue')
-            ->willReturnCallback(function($x) { return (int)$x; });
-
         $mockParameterFactory = $this->getMock('\DC\Router\IParameterTypeFactory');
         $mockParameterFactory
             ->expects($this->any())
             ->method('getParameterFromType')
-            ->willReturn($mockParameter);
+            ->willReturn(new \DC\Router\ParameterTypes\StringParameterType());
 
         $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory, [], new \DC\JSON\Serializer());
 
         $mockRoute = $this->getMock('\DC\Router\IRoute');
+        $mockRoute->expects($this->any())->method('getCallable')->willReturn(function($name, $id) {});
         $mockRoute->expects($this->any())->method('getMethod')->willReturn("GET");
         $mockRoute->expects($this->any())->method('getPath')->willReturn('/site/{name}/user/{id:int}/details');
         $parameters = $matcher->extractParameters(new FakeRequest("GET", "/site/foo/user/3/details"), $mockRoute);
@@ -161,7 +147,7 @@ class DefaultRouteMatcherTest extends \PHPUnit_Framework_TestCase {
         $this->assertArrayHasKey('id', $parameters);
 
         $this->assertInternalType('string', $parameters['name']);
-        $this->assertInternalType('int', $parameters['id']);
+        $this->assertInternalType('string', $parameters['id']);
 
         $this->assertEquals(2, count($parameters));
 
@@ -171,10 +157,15 @@ class DefaultRouteMatcherTest extends \PHPUnit_Framework_TestCase {
 
     function testQueryParameters() {
         $mockParameterFactory = $this->getMock('\DC\Router\IParameterTypeFactory');
+        $mockParameterFactory
+            ->expects($this->any())
+            ->method('getParameterFromType')
+            ->willReturn(new \DC\Router\ParameterTypes\StringParameterType());
 
         $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory, [], new \DC\JSON\Serializer());
 
         $mockRoute = $this->getMock('\DC\Router\IRoute');
+        $mockRoute->expects($this->any())->method('getCallable')->willReturn(function() {});
         $mockRoute->expects($this->any())->method('getMethod')->willReturn("GET");
         $mockRoute->expects($this->any())->method('getPath')->willReturn('/site?user_id={id}');
         $parameters = $matcher->extractParameters(new FakeRequest("GET", "/site?user_id=3", array('user_id' => 3)), $mockRoute);
@@ -183,10 +174,15 @@ class DefaultRouteMatcherTest extends \PHPUnit_Framework_TestCase {
 
     function testMultipleQueryParametersInDifferentOrder() {
         $mockParameterFactory = $this->getMock('\DC\Router\IParameterTypeFactory');
+        $mockParameterFactory
+            ->expects($this->any())
+            ->method('getParameterFromType')
+            ->willReturn(new \DC\Router\ParameterTypes\StringParameterType());
 
         $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory, [], new \DC\JSON\Serializer());
 
         $mockRoute = $this->getMock('\DC\Router\IRoute');
+        $mockRoute->expects($this->any())->method('getCallable')->willReturn(function() {});
         $mockRoute->expects($this->any())->method('getMethod')->willReturn("GET");
         $mockRoute->expects($this->any())->method('getPath')->willReturn('/site?user_id={id}&foo={foo}');
         $parameters = $matcher->extractParameters(new FakeRequest("GET", "/site?user_id=3&foo=bar",
