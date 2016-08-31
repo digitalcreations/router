@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7ed88d0fd9e8fbbf4200f5b9d936d44a",
+    "hash": "c41d64e6a7db70b6a70bb13a7ae9dfde",
     "content-hash": "bf2ccf26f834ebcecc702cf119789f40",
     "packages": [
         {
@@ -266,12 +266,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/digitalcreations/ioc.git",
-                "reference": "f8d71defb7ff9b3995a720e71879ae0851ea30a0"
+                "reference": "dbcf878f56ec4f536c7285386e275b36fd7f3636"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/digitalcreations/ioc/zipball/f8d71defb7ff9b3995a720e71879ae0851ea30a0",
-                "reference": "f8d71defb7ff9b3995a720e71879ae0851ea30a0",
+                "url": "https://api.github.com/repos/digitalcreations/ioc/zipball/dbcf878f56ec4f536c7285386e275b36fd7f3636",
+                "reference": "dbcf878f56ec4f536c7285386e275b36fd7f3636",
                 "shasum": ""
             },
             "require": {
@@ -312,7 +312,7 @@
                 "inversion of control",
                 "ioc"
             ],
-            "time": "2016-08-31 08:57:48"
+            "time": "2016-08-31 12:39:18"
         },
         {
             "name": "phpunit/php-code-coverage",
