@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "74fee270671dd9243c37306fde81ea9d",
-    "content-hash": "7ba1d1e5c76b4d8bc107e104a90d33b3",
+    "hash": "7ed88d0fd9e8fbbf4200f5b9d936d44a",
+    "content-hash": "bf2ccf26f834ebcecc702cf119789f40",
     "packages": [
         {
             "name": "dc/json",
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/digitalcreations/json.git",
-                "reference": "c6456e826ad28a9005ec419249e19517bc4a0428"
+                "reference": "72d1a02b5d9bd7dd2c78744be26141296161d142"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/digitalcreations/json/zipball/c6456e826ad28a9005ec419249e19517bc4a0428",
-                "reference": "c6456e826ad28a9005ec419249e19517bc4a0428",
+                "url": "https://api.github.com/repos/digitalcreations/json/zipball/72d1a02b5d9bd7dd2c78744be26141296161d142",
+                "reference": "72d1a02b5d9bd7dd2c78744be26141296161d142",
                 "shasum": ""
             },
             "require": {
@@ -63,7 +63,7 @@
                 "json",
                 "serializer"
             ],
-            "time": "2016-01-10 10:31:21"
+            "time": "2016-01-21 10:26:59"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -262,19 +262,24 @@
         },
         {
             "name": "dc/ioc",
-            "version": "0.1.4",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/digitalcreations/ioc.git",
-                "reference": "89efc42e6d0207311d4313180d11d75d3cdd73b0"
+                "reference": "f8d71defb7ff9b3995a720e71879ae0851ea30a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/digitalcreations/ioc/zipball/89efc42e6d0207311d4313180d11d75d3cdd73b0",
-                "reference": "89efc42e6d0207311d4313180d11d75d3cdd73b0",
+                "url": "https://api.github.com/repos/digitalcreations/ioc/zipball/f8d71defb7ff9b3995a720e71879ae0851ea30a0",
+                "reference": "f8d71defb7ff9b3995a720e71879ae0851ea30a0",
                 "shasum": ""
             },
+            "require": {
+                "phpdocumentor/reflection-docblock": "2.*"
+            },
             "require-dev": {
+                "dc/cache": "dev-master",
+                "dc/cache-memcached": "dev-master",
                 "phpunit/phpunit": "4.0.*"
             },
             "type": "library",
@@ -307,7 +312,7 @@
                 "inversion of control",
                 "ioc"
             ],
-            "time": "2015-06-16 11:00:40"
+            "time": "2016-08-31 08:57:48"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -459,20 +464,23 @@
         },
         {
             "name": "phpunit/php-timer",
-            "version": "1.0.7",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-timer.git",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b"
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/38e9124049cf1a164f1e4537caf19c99bf1eb260",
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4|~5"
             },
             "type": "library",
             "autoload": {
@@ -496,7 +504,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2015-06-21 08:01:12"
+            "time": "2016-05-12 18:03:57"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -731,23 +739,23 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "1.3.3",
+            "version": "1.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "6e7133793a8e5a5714a551a8324337374be209df"
+                "reference": "be2c607e43ce4c89ecd60e75c6a85c126e754aea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6e7133793a8e5a5714a551a8324337374be209df",
-                "reference": "6e7133793a8e5a5714a551a8324337374be209df",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/be2c607e43ce4c89ecd60e75c6a85c126e754aea",
+                "reference": "be2c607e43ce4c89ecd60e75c6a85c126e754aea",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": "^5.3.3 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.4"
+                "phpunit/phpunit": "^4.8 || ^5.0"
             },
             "type": "library",
             "extra": {
@@ -777,7 +785,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2015-12-02 08:37:27"
+            "time": "2016-08-18 05:49:44"
         },
         {
             "name": "sebastian/exporter",
@@ -881,16 +889,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.1",
+            "version": "v2.8.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "ac84cbb98b68a6abbc9f5149eb96ccc7b07b8966"
+                "reference": "0ceab136f43ed9d3e97b3eea32a7855dc50c121d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/ac84cbb98b68a6abbc9f5149eb96ccc7b07b8966",
-                "reference": "ac84cbb98b68a6abbc9f5149eb96ccc7b07b8966",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/0ceab136f43ed9d3e97b3eea32a7855dc50c121d",
+                "reference": "0ceab136f43ed9d3e97b3eea32a7855dc50c121d",
                 "shasum": ""
             },
             "require": {
@@ -926,19 +934,20 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-12-26 13:37:56"
+            "time": "2016-07-17 09:06:15"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
         "dc/json": 20,
+        "dc/ioc": 20,
         "dc/cache-memcached": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "5.6"
+        "php": ">=5.6"
     },
     "platform-dev": []
 }

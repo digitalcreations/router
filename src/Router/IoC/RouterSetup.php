@@ -30,6 +30,8 @@ class RouterSetup {
 
         \phpDocumentor\Reflection\DocBlock\Tag::registerTagHandler(\DC\Router\BodyTag::$name, '\DC\Router\BodyTag');
 
+        \DC\JSON\IoC\SerializerSetup::setup($container);
+
         return $container->resolve('\DC\Router\Router');
     }
 

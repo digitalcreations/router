@@ -87,7 +87,7 @@ class DefaultRouteMatcherTest extends \PHPUnit_Framework_TestCase {
             ->method('getParameterFromType')
             ->willReturn($mockParameter);
 
-        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory);
+        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory, [], new \DC\JSON\Serializer());
 
         $mockRoute = $this->getMock('\DC\Router\IRoute');
         $mockRoute->expects($this->any())->method('getMethod')->willReturn("GET");
@@ -103,7 +103,7 @@ class DefaultRouteMatcherTest extends \PHPUnit_Framework_TestCase {
     public function testThrowsOnRouteNotFound() {
         $mockParameterFactory = $this->getMock('\DC\Router\IParameterTypeFactory');
 
-        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory);
+        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory, [], new \DC\JSON\Serializer());
         $matcher->findRoute(new FakeRequest("GET", "/site/3/user"), array());
     }
 
@@ -124,7 +124,7 @@ class DefaultRouteMatcherTest extends \PHPUnit_Framework_TestCase {
         $mockRoute->expects($this->any())->method('getPath')->willReturn('/site/{name}/{bar}/{id}/details');
         $routes[] = $mockRoute;
 
-        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory);
+        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory, [], new \DC\JSON\Serializer());
         $matcher->findRoute(new FakeRequest("GET", "/site/foo/user/3/details"), $routes);
     }
 
@@ -150,7 +150,7 @@ class DefaultRouteMatcherTest extends \PHPUnit_Framework_TestCase {
             ->method('getParameterFromType')
             ->willReturn($mockParameter);
 
-        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory);
+        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory, [], new \DC\JSON\Serializer());
 
         $mockRoute = $this->getMock('\DC\Router\IRoute');
         $mockRoute->expects($this->any())->method('getMethod')->willReturn("GET");
@@ -172,7 +172,7 @@ class DefaultRouteMatcherTest extends \PHPUnit_Framework_TestCase {
     function testQueryParameters() {
         $mockParameterFactory = $this->getMock('\DC\Router\IParameterTypeFactory');
 
-        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory);
+        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory, [], new \DC\JSON\Serializer());
 
         $mockRoute = $this->getMock('\DC\Router\IRoute');
         $mockRoute->expects($this->any())->method('getMethod')->willReturn("GET");
@@ -184,7 +184,7 @@ class DefaultRouteMatcherTest extends \PHPUnit_Framework_TestCase {
     function testMultipleQueryParametersInDifferentOrder() {
         $mockParameterFactory = $this->getMock('\DC\Router\IParameterTypeFactory');
 
-        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory);
+        $matcher = new \DC\Router\DefaultRouteMatcher($mockParameterFactory, [], new \DC\JSON\Serializer());
 
         $mockRoute = $this->getMock('\DC\Router\IRoute');
         $mockRoute->expects($this->any())->method('getMethod')->willReturn("GET");

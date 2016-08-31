@@ -100,6 +100,8 @@ class RouterSetupTest extends \PHPUnit_Framework_TestCase {
         })->to('\DC\Router\IRouteFactory')->withContainerLifetime();
         $container->register('\DC\Router\Router')->withContainerLifetime();
 
+        \DC\JSON\IoC\SerializerSetup::setup($container);
+
         $router = $container->resolve('\DC\Router\Router');
         // end copy
 
