@@ -67,7 +67,7 @@ class RouterSetupTest extends \PHPUnit_Framework_TestCase {
             $this->assertTrue($instance === $container->resolve($interface));
         }
 
-        $this->assertCount(3, $container->resolveAll('\DC\Router\IParameterType'));
+        $this->assertCount(4, $container->resolveAll('\DC\Router\IParameterType'));
     }
 
     function testParameterType() {
