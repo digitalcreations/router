@@ -82,6 +82,7 @@ server:
     install: '1'
     packages:
         - htop
+        - php-memcached
 users_groups:
     install: '1'
     groups: {  }
