@@ -266,12 +266,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/digitalcreations/ioc.git",
-                "reference": "dbcf878f56ec4f536c7285386e275b36fd7f3636"
+                "reference": "e3e837f9aee615e17ead05edb40c8d56aa61d28e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/digitalcreations/ioc/zipball/dbcf878f56ec4f536c7285386e275b36fd7f3636",
-                "reference": "dbcf878f56ec4f536c7285386e275b36fd7f3636",
+                "url": "https://api.github.com/repos/digitalcreations/ioc/zipball/e3e837f9aee615e17ead05edb40c8d56aa61d28e",
+                "reference": "e3e837f9aee615e17ead05edb40c8d56aa61d28e",
                 "shasum": ""
             },
             "require": {
@@ -312,7 +312,7 @@
                 "inversion of control",
                 "ioc"
             ],
-            "time": "2016-08-31 12:39:18"
+            "time": "2016-08-31 13:13:55"
         },
         {
             "name": "phpunit/php-code-coverage",
