@@ -25,6 +25,7 @@ class DefaultRouteFactory implements IRouteFactory {
         $this->classRouteFactory = $classRouteFactory;
         $this->cache = $cache;
     }
+
     /**
      * @return \DC\Router\IRoute[] All routes
      */

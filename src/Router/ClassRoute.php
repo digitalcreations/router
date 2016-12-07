@@ -14,8 +14,12 @@ class ClassRoute implements IRoute {
 
     private $method;
     private $path;
+    /**
+     * @var ITagTransformer[]
+     */
+    private $tags;
 
-    function __construct($class, $function, $httpMethod, $path)
+    function __construct($class, $function, $httpMethod, $path, array $tags = null)
     {
         if (!class_exists($class)) {
             throw new \InvalidArgumentException("No such class: $class");
@@ -24,6 +28,7 @@ class ClassRoute implements IRoute {
         $this->function = $function;
         $this->method = $httpMethod;
         $this->path = $path;
+        $this->tags = $tags;
     }
 
     /**
@@ -48,5 +53,28 @@ class ClassRoute implements IRoute {
     function getCallable()
     {
         return array($this->class, $this->function);
+    }
+
+    /**
+     * Get the data with IRouteTag-implementing tags as an associative array.
+     *
+     * @return mixed[] String-indexed array that contains values as supplied by the phpDocumentor tags
+     */
+    function getTagValues()
+    {
+        $values = [];
+        foreach ($this->tags as $tag) {
+            if (isset($values[$tag->getName()]) && !is_array($values[$tag->getName()])) {
+                $values[$tag->getName()] = [$values[$tag->getName()]];
+            }
+
+            if (isset($values[$tag->getName()]) && is_array($values[$tag->getName()])) {
+                $values[$tag->getName()][] = $tag->getValueForRoute();
+            }
+            else {
+                $values[$tag->getName()] = $tag->getValueForRoute();
+            }
+        }
+        return $values;
     }
 }

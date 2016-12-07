@@ -43,6 +43,8 @@ class Router {
         $this->responseWriter = $responseWriter;
         $this->classFactory = $classFactory;
         $this->filters = is_array($filters) ? $filters : [];
+
+        \phpDocumentor\Reflection\DocBlock\Tag::registerTagHandler(RouteTagTransformer::NAME, '\DC\Router\RouteTagTransformer');
     }
 
     private function getReflectionFunctionForCallable($callable) {

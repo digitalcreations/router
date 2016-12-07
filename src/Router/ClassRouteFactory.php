@@ -2,33 +2,35 @@
 namespace DC\Router;
 
 class ClassRouteFactory {
-    private static function getPartsFromReflectionMethod(\ReflectionMethod $method) {
-        $comment = $method->getDocComment();
-        if (preg_match_all('%^\s*\*\s*@route\s+(?:(?P<method>POST|GET|PUT|HEAD|DELETE|OPTIONS|TRACE|SEARCH|CONNECT|PROPFIND|PROPPATCH|PATCH|MKCOL|COPY|MOVE|LOCK|UNLOCK)\s+)?(?P<route>/?(?::?[a-z0-9_.()[\]{}=?&]+/?)*\$?)\s*$%im', $comment, $result, PREG_SET_ORDER))
-        {
-            return array_map(function($r) use ($method) {
-                return array(
-                    'function' => $method->getName(),
-                    'method' => empty($r['method']) ? null : strtoupper($r['method']),
-                    'path' => $r['route']
-                );
-            }, $result);
-        } else {
-            return array();
-        }
-    }
-
+    /**
+     * @param $className
+     * @return array|\DC\Router\ClassRoute[]
+     */
     function routesFromClassName($className) {
+        \phpDocumentor\Reflection\DocBlock\Tag::registerTagHandler(RouteTagTransformer::NAME, '\DC\Router\RouteTagTransformer');
+
         $reflectionClass = new \ReflectionClass($className);
         $reflectionMethods = $reflectionClass->getMethods();
-        $parts = array_map(array('\DC\Router\ClassRouteFactory', 'getPartsFromReflectionMethod'), $reflectionMethods);
 
-        $routes = array();
-        foreach ($parts as $partRoutes) {
-            foreach ($partRoutes as $partRoute) {
-                $routes[] = new ClassRoute($className, $partRoute['function'], $partRoute['method'], $partRoute['path']);
+        $routes = [];
+
+        foreach ($reflectionMethods as $reflectionMethod) {
+            $docBlock = new \phpDocumentor\Reflection\DocBlock($reflectionMethod);
+            $tags = $docBlock->getTagsByName(RouteTagTransformer::NAME);
+            foreach ($tags as $tag) {
+                /** @var RouteSpecification $routeValues */
+                $routeValues = $tag->getValueForRoute();
+                $routes[] = new ClassRoute(
+                    $className,
+                    $reflectionMethod->getName(),
+                    $routeValues->getMethod(),
+                    $routeValues->getPath(),
+                    array_filter($tags, function(\phpDocumentor\Reflection\DocBlock\Tag $tag) {
+                        return $tag instanceof RouteTagTransformer;
+                    }));
             }
         }
+
         return $routes;
     }
 }
