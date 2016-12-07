@@ -15,11 +15,11 @@ vagrantfile:
                     vmware:
                         numvcpus: 1
                     parallels:
-                        use_linked_clone: 0
+                        linked_clone: 0
                         check_guest_tools: 0
                         update_guest_tools: 0
                 machines:
-                    vflm_neqkjsaurwyc:
+                    vflm_xhoektqfkp2r:
                         id: router.local
                         hostname: router.local
                         network:
@@ -29,12 +29,14 @@ vagrantfile:
         provision:
             puppet:
                 manifests_path: puphpet/puppet/manifests
-                module_path: puphpet/puppet/modules
+                module_path:
+                    - puphpet/puppet/modules
+                    - puphpet/puppet/manifests
                 options:
                     - '--verbose'
                     - '--hiera_config /vagrant/puphpet/puppet/hiera.yaml'
         synced_folder:
-            vflsf_hinkue6lvegl:
+            vflsf_jbqw2782oz0d:
                 source: ./
                 target: /var/www
                 sync_type: default
@@ -104,25 +106,22 @@ cron:
 nginx:
     install: '0'
     settings:
+        version: present
         default_vhost: 1
-        proxy_buffer_size: 128k
         proxy_buffers: '4 256k'
+        proxy_buffer_size: 128k
         proxy_connect_timeout: 600s
         proxy_send_timeout: 600s
         proxy_read_timeout: 600s
         names_hash_bucket_size: 128
     upstreams: {  }
     vhosts:
-        nxv_xryzxhr9rwhe:
+        nxv_7iu91fa2npwe:
             server_name: awesome.dev
             server_aliases:
                 - www.awesome.dev
             www_root: /var/www/awesome
             listen_port: '80'
-            index_files:
-                - index.html
-                - index.htm
-                - index.php
             client_max_body_size: 1m
             ssl: '0'
             ssl_cert: ''
@@ -133,7 +132,8 @@ nginx:
             rewrite_to_https: '1'
             spdy: '1'
             locations:
-                nxvl_42hxri6k6xpg:
+                nxvl_372ns9q6nwvg:
+                    www_root: ''
                     location: /
                     try_files:
                         - $uri
@@ -144,7 +144,8 @@ nginx:
                     fastcgi_split_path: ''
                     proxy: ''
                     proxy_redirect: ''
-                nxvl_x3vhmso04ei9:
+                nxvl_0va1al7o2k6e:
+                    www_root: ''
                     location: '~ \.php$'
                     try_files:
                         - $uri
@@ -175,7 +176,7 @@ apache:
         - proxy_fcgi
         - rewrite
     vhosts:
-        av_ebk1gw3pd00d:
+        av_acd8flvu8zdu:
             servername: router.local
             serveraliases:
                 - www.router.local
@@ -194,7 +195,7 @@ apache:
             ssl_protocol: ''
             ssl_cipher: ''
             directories:
-                avd_hywpmwwb9c0h:
+                avd_fq7wc7fpk9ab:
                     path: /var/www/sample
                     options:
                         - Indexes
@@ -206,7 +207,7 @@ apache:
                         - 'all granted'
                     custom_fragment: ''
                     files_match:
-                        avdfm_odhfsmmwl9yi:
+                        avdfm_90u5wmulq0oh:
                             path: \.php$
                             sethandler: 'proxy:fcgi://127.0.0.1:9000'
                             custom_fragment: ''
@@ -220,7 +221,7 @@ letsencrypt:
 php:
     install: '1'
     settings:
-        version: '70'
+        version: '7.1'
     modules:
         php:
             - cli
@@ -236,7 +237,7 @@ php:
     fpm_ini:
         error_log: /var/log/php-fpm.log
     fpm_pools:
-        phpfp_vka8j34bgc9w:
+        phpfp_vpq4df5v5ciu:
             ini:
                 prefix: www
                 listen: /var/run/php5-
@@ -286,11 +287,10 @@ python:
 nodejs:
     install: '0'
     settings:
-        version: null
+        version: '6'
     npm_packages: {  }
 hhvm:
     install: '0'
-    nightly: 0
     composer: '1'
     composer_home: ''
     settings: {  }
@@ -311,15 +311,15 @@ mariadb:
         override_options: {  }
     adminer: 0
     users:
-        mariadbnu_ug5wdxd6gdof:
+        mariadbnu_prv7fr63a09s:
             name: dbuser
             password: '123'
     databases:
-        mariadbnd_nyudesp6d0zo:
+        mariadbnd_mtlr48fqx0wj:
             name: dbname
             sql: ''
     grants:
-        mariadbng_6advxvjnzwbf:
+        mariadbng_hys3kdwhnp8u:
             user: dbuser
             table: '*.*'
             privileges:
@@ -332,15 +332,15 @@ mysql:
         override_options: {  }
     adminer: 0
     users:
-        mysqlnu_31n9ikpb57qa:
+        mysqlnu_nfowbpk29qel:
             name: dbuser
             password: '123'
     databases:
-        mysqlnd_8zh7jd5ogeam:
+        mysqlnd_yo4f354qp0eq:
             name: dbname
             sql: ''
     grants:
-        mysqlng_r194ehjjr1w9:
+        mysqlng_m773v8jwhrfd:
             user: dbuser
             table: '*.*'
             privileges:
