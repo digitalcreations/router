@@ -122,9 +122,17 @@ You'll need to register this with your IoC container before the routing system i
 
 ```php
 $container = new \DC\IoC\Container();
+
+$container->registerModules([
+    new \DC\Router\IoC\Module(['\CatsController']),
+    new \DC\Cache\Module(),
+    new \DC\JSON\IoC\Module()
+]);
+
 $container->register('\UserParameterType')->to('\DC\Router\IParameterType')->withContainerLifetime();
-\DC\Router\IoC\RouterSetup::route($container, 
-	array('\Fully\Qualified\Controller\Name', '\CatsController'));
+
+$router = $container->resolve('\DC\Router\Router');
+$router->route($container->resolve('\DC\Router\IRequest'));
 ```
 
 Now you can use it in your own routes:
