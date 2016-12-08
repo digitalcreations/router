@@ -24,7 +24,7 @@
     },
     "suggest": {
         "dc/ioc": "dev-master",
-        "dc/cache": "0.*",
+        "dc/cache": "dev-master",
         "dc/router-swagger": "0.*"
     },
     "require": {
@@ -36,7 +36,7 @@
     "require-dev": {
         "phpunit/phpunit": "4.0.*",
         "dc/ioc": "dev-master",
-        "dc/cache": "0.*",
+        "dc/cache": "dev-master",
         "dc/cache-memcached": "dev-master"
     },
     "autoload": {

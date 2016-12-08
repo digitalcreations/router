@@ -2,15 +2,27 @@
 
 namespace DC\Router\IoC;
 
-class RouterSetup {
+class Module extends \DC\IoC\Modules\Module {
     /**
-     * Set up all the services required by the router for dependency injection.
-     *
-     * @param \DC\IoC\Container $container
-     * @param string[] $controllers
-     * @return \DC\Router\Router
+     * @var array|\string[]
      */
-    static function setup(\DC\IoC\Container $container, $controllers)
+    private $controllers;
+
+    /**
+     * Module constructor.
+     * @param string[] $controllers List of controller names
+     */
+    public function __construct(array $controllers)
+    {
+        parent::__construct("dc/router", ["dc/json", "dc/cache"]);
+        $this->controllers = $controllers;
+    }
+
+    /**
+     * @param \DC\IoC\Container $container
+     * @return null
+     */
+    function register(\DC\IoC\Container $container)
     {
         $container->register(new ClassFactory($container))->to('\DC\Router\IClassFactory');
         $container->register('\DC\Router\DefaultRouteMatcher')->to('\DC\Router\IRouteMatcher')->withContainerLifetime();
@@ -23,31 +35,13 @@ class RouterSetup {
         $container->register('\DC\Router\ParameterTypes\IntParameterType')->to('\DC\Router\IParameterType')->withContainerLifetime();
         $container->register('\DC\Router\ParameterTypes\StringParameterType')->to('\DC\Router\IParameterType')->withContainerLifetime();
 
+        $controllers = $this->controllers;
+
         $container->register(function(\DC\Router\ClassRouteFactory $classRouteFactory, \DC\Cache\ICache $cache = null) use ($controllers) {
             return new \DC\Router\DefaultRouteFactory($controllers, $classRouteFactory, $cache);
         })->to('\DC\Router\IRouteFactory')->withContainerLifetime();
         $container->register('\DC\Router\Router')->withContainerLifetime();
 
         \phpDocumentor\Reflection\DocBlock\Tag::registerTagHandler(\DC\Router\BodyTag::$name, '\DC\Router\BodyTag');
-
-        \DC\JSON\IoC\SerializerSetup::setup($container);
-
-        return $container->resolve('\DC\Router\Router');
     }
-
-    /**
-     * Set up all the services required by the router for dependency injection.
-     *
-     * @param \DC\IoC\Container $container
-     * @param string[] $controllers
-     * @return \DC\Router\Router
-     * @codeCoverageIgnore
-     */
-    static function route(\DC\IoC\Container $container, $controllers)
-    {
-        $router = self::setup($container, $controllers);
-        $router->route($container->resolve('\DC\Router\IRequest'));
-        return $router;
-    }
-
-} 
+}

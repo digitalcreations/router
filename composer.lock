@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c41d64e6a7db70b6a70bb13a7ae9dfde",
-    "content-hash": "bf2ccf26f834ebcecc702cf119789f40",
+    "hash": "a7c6c4155f3b6557472bc6ef8c42705c",
+    "content-hash": "ba84e65059a6940134ca5efc8479c5a3",
     "packages": [
         {
             "name": "dc/json",
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/digitalcreations/json.git",
-                "reference": "72d1a02b5d9bd7dd2c78744be26141296161d142"
+                "reference": "7d60c1146e16d03db51116ed535366be188e741a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/digitalcreations/json/zipball/72d1a02b5d9bd7dd2c78744be26141296161d142",
-                "reference": "72d1a02b5d9bd7dd2c78744be26141296161d142",
+                "url": "https://api.github.com/repos/digitalcreations/json/zipball/7d60c1146e16d03db51116ed535366be188e741a",
+                "reference": "7d60c1146e16d03db51116ed535366be188e741a",
                 "shasum": ""
             },
             "require": {
@@ -26,12 +26,12 @@
                 "phpdocumentor/reflection-docblock": "2.*"
             },
             "require-dev": {
-                "dc/cache": "0.*",
+                "dc/cache": "dev-master",
                 "dc/ioc": "dev-master",
                 "phpunit/phpunit": "4.0.*"
             },
             "suggest": {
-                "dc/cache": "0.*",
+                "dc/cache": "dev-master",
                 "dc/ioc": "dev-master"
             },
             "type": "library",
@@ -63,7 +63,7 @@
                 "json",
                 "serializer"
             ],
-            "time": "2016-01-21 10:26:59"
+            "time": "2016-12-08 13:34:20"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -167,20 +167,24 @@
     "packages-dev": [
         {
             "name": "dc/cache",
-            "version": "0.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/digitalcreations/cache.git",
-                "reference": "9199d17f86a923988ab1d73908a486e26a649699"
+                "reference": "a09c01d40589ce9fa2f6dd925477b9d1ef568bf6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/digitalcreations/cache/zipball/9199d17f86a923988ab1d73908a486e26a649699",
-                "reference": "9199d17f86a923988ab1d73908a486e26a649699",
+                "url": "https://api.github.com/repos/digitalcreations/cache/zipball/a09c01d40589ce9fa2f6dd925477b9d1ef568bf6",
+                "reference": "a09c01d40589ce9fa2f6dd925477b9d1ef568bf6",
                 "shasum": ""
             },
+            "require-dev": {
+                "dc/ioc": "dev-master"
+            },
             "suggest": {
-                "dc/cache-memcache": ">=0.2"
+                "dc/cache-memcache": ">=0.2",
+                "dc/ioc": "dev-master"
             },
             "type": "library",
             "autoload": {
@@ -210,7 +214,7 @@
                 "cache",
                 "memcached"
             ],
-            "time": "2014-10-27 08:45:47"
+            "time": "2016-12-08 13:37:23"
         },
         {
             "name": "dc/cache-memcached",
@@ -266,12 +270,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/digitalcreations/ioc.git",
-                "reference": "e3e837f9aee615e17ead05edb40c8d56aa61d28e"
+                "reference": "36c23ae5302564b895333cdb476236e1cf548621"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/digitalcreations/ioc/zipball/e3e837f9aee615e17ead05edb40c8d56aa61d28e",
-                "reference": "e3e837f9aee615e17ead05edb40c8d56aa61d28e",
+                "url": "https://api.github.com/repos/digitalcreations/ioc/zipball/36c23ae5302564b895333cdb476236e1cf548621",
+                "reference": "36c23ae5302564b895333cdb476236e1cf548621",
                 "shasum": ""
             },
             "require": {
@@ -312,7 +316,7 @@
                 "inversion of control",
                 "ioc"
             ],
-            "time": "2016-08-31 13:13:55"
+            "time": "2016-12-08 13:18:35"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -942,6 +946,7 @@
     "stability-flags": {
         "dc/json": 20,
         "dc/ioc": 20,
+        "dc/cache": 20,
         "dc/cache-memcached": 20
     },
     "prefer-stable": false,

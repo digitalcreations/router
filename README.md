@@ -31,8 +31,15 @@ We strongly recommend you use this with [the `dc/ioc` package](http://github.com
 ```php
 <?php
 $container = new \DC\IoC\Container();
-\DC\Router\IoC\RouterSetup::route($container, 
-	array('\Fully\Qualified\Controller\Name', '\CatsController'));
+
+$container->registerModules([
+    new \DC\Router\IoC\Module(['\Fully\Qualified\ControllerName', '\CatsController']),
+    new \DC\Cache\Module(),
+    new \DC\JSON\IoC\Module()
+]);
+
+$router = $container->resolve('\DC\Router\Router');
+$router->route($container->resolve('\DC\Router\IRequest'));
 ```
 
 DC\Router is based around routes and controllers. A route is a single function that gets invoked when a URL is hit.

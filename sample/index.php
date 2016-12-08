@@ -103,11 +103,12 @@ class Cat {
 }
 
 $container = new \DC\IoC\Container();
-$container->register(function() {
-    return new \DC\Cache\Implementations\Memcached\MemcacheConfiguration('localhost', 11211);
-})->to('\DC\Cache\Implementations\Memcached\MemcacheConfiguration')->withContainerLifetime();
-$container->register('\DC\Cache\Implementations\Memcached\Cache')->to('\DC\Cache\ICache')->withContainerLifetime();
 
-\DC\JSON\IoC\SerializerSetup::setup($container);
-\DC\Router\IoC\RouterSetup::route($container,
-    ['\DefaultController', '\CatsController']);
+$container->registerModules([
+    new \DC\Router\IoC\Module(['\DefaultController', '\CatsController']),
+    new \DC\Cache\Module(),
+    new \DC\JSON\IoC\Module()
+]);
+
+$router = $container->resolve('\DC\Router\Router');
+$router->route($container->resolve('\DC\Router\IRequest'));
