@@ -43,12 +43,12 @@ class Module extends \DC\IoC\Modules\Module {
 
         $controllers = $this->controllers;
 
-        $container->register(function(\DC\Router\ClassRouteFactory $classRouteFactory, \DC\Cache\ICache $cache = null) use ($controllers) {
-            return new \DC\Router\DefaultRouteFactory($controllers, $classRouteFactory, $cache);
-        })->to('\DC\Router\IRouteFactory')->withContainerLifetime();
-        $container->register('\DC\Router\Router')->withContainerLifetime();
+        $swaggerOptions = $this->options->getSwaggerOptions();
+        if ($swaggerOptions instanceof \DC\Router\Swagger\Options) {
+            $controllers[] = '\DC\Router\Swagger\SwaggerController';
 
-        \phpDocumentor\Reflection\DocBlock\Tag::registerTagHandler(\DC\Router\BodyTag::$name, '\DC\Router\BodyTag');
+            $container->register($swaggerOptions);
+        }
 
         if ($this->options->isOutputCacheEnabled()) {
             $container
@@ -58,5 +58,12 @@ class Module extends \DC\IoC\Modules\Module {
                 ->register('\DC\Router\OutputCache\CacheFilter')
                 ->to('\DC\Router\IGlobalFilter');
         }
+
+        $container->register(function(\DC\Router\ClassRouteFactory $classRouteFactory, \DC\Cache\ICache $cache = null) use ($controllers) {
+            return new \DC\Router\DefaultRouteFactory($controllers, $classRouteFactory, $cache);
+        })->to('\DC\Router\IRouteFactory')->withContainerLifetime();
+        $container->register('\DC\Router\Router')->withContainerLifetime();
+
+        \phpDocumentor\Reflection\DocBlock\Tag::registerTagHandler(\DC\Router\BodyTag::$name, '\DC\Router\BodyTag');
     }
 }
