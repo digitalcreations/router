@@ -96,7 +96,8 @@ class Cat {
 class SwaggerDefinitionBuilderTest extends \PHPUnit_Framework_TestCase
 {
     private function createContainer(array $controllers) {
-        $swaggerOptions = new \DC\Router\Swagger\Options(new \DC\Router\Swagger\ComposerPackage("/vagrant/composer.json"));
+        $composerFile = str_replace("src/Tests/Router/Swagger/SwaggerDefinitionBuilderTest.php", "composer.json", __FILE__);
+        $swaggerOptions = new \DC\Router\Swagger\Options(new \DC\Router\Swagger\ComposerPackage($composerFile));
         $routerOptions = new \DC\Router\IoC\ModuleOptions();
         $routerOptions->enableSwagger($swaggerOptions);
 
