@@ -7,15 +7,21 @@ class Module extends \DC\IoC\Modules\Module {
      * @var array|\string[]
      */
     private $controllers;
+    /**
+     * @var ModuleOptions
+     */
+    private $options;
 
     /**
      * Module constructor.
-     * @param string[] $controllers List of controller names
+     * @param array|\string[] $controllers List of controller names
+     * @param ModuleOptions $options
      */
-    public function __construct(array $controllers)
+    public function __construct(array $controllers, ModuleOptions $options = null)
     {
         parent::__construct("dc/router", ["dc/json", "dc/cache"]);
         $this->controllers = $controllers;
+        $this->options = $options ?? new ModuleOptions();
     }
 
     /**
@@ -43,5 +49,14 @@ class Module extends \DC\IoC\Modules\Module {
         $container->register('\DC\Router\Router')->withContainerLifetime();
 
         \phpDocumentor\Reflection\DocBlock\Tag::registerTagHandler(\DC\Router\BodyTag::$name, '\DC\Router\BodyTag');
+
+        if ($this->options->isOutputCacheEnabled()) {
+            $container
+                ->register('\DC\Router\OutputCache\DefaultKeyGenerator')
+                ->to('\DC\Router\OutputCache\IKeyGenerator');
+            $container
+                ->register('\DC\Router\OutputCache\CacheFilter')
+                ->to('\DC\Router\IGlobalFilter');
+        }
     }
 }
