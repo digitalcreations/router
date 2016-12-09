@@ -90,11 +90,11 @@ class Router {
      * @param null $response
      * @return bool
      */
-    private function applyFilters($method, $request, $route, $routeOrderedParams, $rawParams, $response = null) {
+    private function applyFilters($method, $request, $route, $routeOrderedParams, $rawParams, &$response = null) {
         foreach ($this->filters as $filter) {
             $filterResponse = call_user_func_array([$filter, $method], [$request, $route, $routeOrderedParams, $rawParams, $response]);
             if ($filterResponse instanceof IResponse) {
-                $this->responseWriter->writeResponse($filterResponse);
+                $response = $filterResponse;
                 return true;
             }
         }
@@ -102,11 +102,15 @@ class Router {
     }
 
     /**
-     * Call this function to route the current request and output the result.
+     * Completes a request and returns the generated response.
+     *
+     * Useful for unit testing.
+     *
      * @param IRequest $request
+     * @return IResponse|Response|\Exception|mixed|null|void
      * @throws Exceptions\ResponseContentIsNotStringException
      */
-    public function route(IRequest $request) {
+    public function createResponse(IRequest $request) {
         $route = $this->routeMatcher->findRoute($request, $this->routes);
         $callable = $route->getCallable();
         if (is_array($callable) && is_string($callable[0]) && class_exists($callable[0])) {
@@ -118,10 +122,11 @@ class Router {
         }
 
         $result = null;
+        $response = null;
         $routeOrderedParams = array_merge($this->getDefaultParameterValueMap($callable), $this->routeMatcher->extractParameters($request, $route));
         $rawParams = $this->routeMatcher->extractParameters($request, $route, true);
         try {
-            if ($this->applyFilters("beforeRouteExecuting", $request, $route, $routeOrderedParams, $rawParams)) return;
+            if ($this->applyFilters("beforeRouteExecuting", $request, $route, $routeOrderedParams, $rawParams, $response)) return $response;
 
             if (isset($controller) && $controller instanceof IController) {
                 $controller->setRequest($request);
@@ -139,8 +144,7 @@ class Router {
             }, $order);
             try {
                 ob_start();
-
-                if ($this->applyFilters("routeExecuting", $request, $route, $routeOrderedParams, $rawParams)) return;
+                if ($this->applyFilters("routeExecuting", $request, $route, $routeOrderedParams, $rawParams, $response)) return $response;
 
                 $result = call_user_func_array($callable, $methodOrderedParams);
             } catch (\Exception $e) {
@@ -159,19 +163,28 @@ class Router {
             $response = $result;
         }
 
-        if ($this->applyFilters("afterRouteExecuting", $request, $route, $routeOrderedParams, $rawParams, $response)) return;
+        if ($this->applyFilters("afterRouteExecuting", $request, $route, $routeOrderedParams, $rawParams, $response)) return $response;
 
         if (isset($controller) && $controller instanceof IController) {
             $controller->afterRoute($routeOrderedParams, $response);
         }
 
-        if ($this->applyFilters("afterRouteExecuted", $request, $route, $routeOrderedParams, $rawParams, $response)) return;
-
+        if ($this->applyFilters("afterRouteExecuted", $request, $route, $routeOrderedParams, $rawParams, $response)) return $response;
 
         if ($response->getContent() !== null && !is_string($response->getContent())) {
             throw new Exceptions\ResponseContentIsNotStringException($request);
         }
 
+        return $response;
+    }
+
+    /**
+     * Call this function to route the current request and output the result.
+     * @param IRequest $request
+     * @throws Exceptions\ResponseContentIsNotStringException
+     */
+    public function route(IRequest $request) {
+        $response = $this->createResponse($request);
         $this->responseWriter->writeResponse($response);
     }
 }
