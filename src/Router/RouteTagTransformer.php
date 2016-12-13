@@ -6,7 +6,7 @@ class RouteTagTransformer extends \phpDocumentor\Reflection\DocBlock\Tag impleme
 {
     const NAME = "route";
 
-    private static $REGEX = '%(?:(?P<method>POST|GET|PUT|HEAD|DELETE|OPTIONS|TRACE|SEARCH|CONNECT|PROPFIND|PROPPATCH|PATCH|MKCOL|COPY|MOVE|LOCK|UNLOCK)\s+)?(?P<path>/?(?::?[a-z0-9_.()[\]{}=?&]+/?)*\$?)$%im';
+    private static $REGEX = '%(?:(?P<method>POST|GET|PUT|HEAD|DELETE|OPTIONS|TRACE|SEARCH|CONNECT|PROPFIND|PROPPATCH|PATCH|MKCOL|COPY|MOVE|LOCK|UNLOCK)\s+)?(?P<path>/?(?::?[a-z0-9_.()[\]{}=?&\\\\]+/?)*\$?)$%im';
 
     private $specification;
 
